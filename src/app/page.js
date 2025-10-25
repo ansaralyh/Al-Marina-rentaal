@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   const [searchForm, setSearchForm] = useState({
@@ -9,9 +9,75 @@ export default function Home() {
     fuelType: ''
   });
 
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
   const handleSearch = (e) => {
     e.preventDefault();
     console.log('Search:', searchForm);
+  };
+
+  // Hero slider data
+  const heroSlides = [
+    {
+      id: 1,
+      title: "Drive Your Journey,",
+      subtitle: "Your Way",
+      description: "Fast. Luxurious. Unforgettable",
+      background: "from-slate-900 via-blue-900 to-slate-900",
+      buttonText: "Explore Fleet",
+      buttonSecondary: "Learn More"
+    },
+    {
+      id: 2,
+      title: "Luxury Redefined",
+      subtitle: "Premium Experience",
+      description: "Experience the ultimate in luxury car rentals",
+      background: "from-purple-900 via-indigo-900 to-blue-900",
+      buttonText: "View Collection",
+      buttonSecondary: "Book Now"
+    },
+    {
+      id: 3,
+      title: "Exotic Dreams",
+      subtitle: "Come True",
+      description: "Drive the world's most prestigious vehicles",
+      background: "from-emerald-900 via-teal-900 to-cyan-900",
+      buttonText: "Discover Cars",
+      buttonSecondary: "Get Quote"
+    },
+    {
+      id: 4,
+      title: "Premium Service",
+      subtitle: "Unmatched Quality",
+      description: "Professional service with luxury vehicles",
+      background: "from-rose-900 via-pink-900 to-purple-900",
+      buttonText: "Our Services",
+      buttonSecondary: "Contact Us"
+    }
+  ];
+
+  // Auto-play functionality
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, heroSlides.length]);
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
   };
 
   const luxuryCars = [
@@ -84,7 +150,7 @@ export default function Home() {
                 </div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                   Marina Rental
-                </h1>
+          </h1>
               </div>
             </div>
             
@@ -107,46 +173,122 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background with gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900"></div>
-        <div className="absolute inset-0 bg-black/40"></div>
-        
-        {/* Animated background elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      {/* Hero Slider Section */}
+      <section id="home" className="relative min-h-screen overflow-hidden">
+        {/* Slider Container */}
+        <div className="relative w-full h-screen">
+          {heroSlides.map((slide, index) => (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+                index === currentSlide
+                  ? 'opacity-100 translate-x-0'
+                  : index < currentSlide
+                  ? 'opacity-0 -translate-x-full'
+                  : 'opacity-0 translate-x-full'
+              }`}
+            >
+              {/* Background with gradient overlay */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${slide.background}`}></div>
+              <div className="absolute inset-0 bg-black/40"></div>
+              
+              {/* Animated background elements */}
+              <div className="absolute inset-0">
+                <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+                <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-cyan-500/10 rounded-full blur-2xl animate-float"></div>
+              </div>
+
+              {/* Content */}
+              <div className="relative z-10 h-full flex items-center justify-center">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                  <div className="animate-fadeInUp">
+                    <h1 className="text-6xl md:text-8xl font-bold text-white mb-8 leading-tight">
+                      {slide.title}<br />
+                      <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                        {slide.subtitle}
+                      </span>
+                    </h1>
+                    <p className="text-2xl md:text-3xl text-blue-100 mb-12 font-light">
+                      {slide.description}
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 transform hover:-translate-y-1">
+                        {slide.buttonText}
+                      </button>
+                      <button className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-gray-900 transition-all duration-300">
+                        {slide.buttonSecondary}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-fadeInUp">
-            <h1 className="text-6xl md:text-8xl font-bold text-white mb-8 leading-tight">
-              Drive Your Journey,<br />
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Your Way
-              </span>
-          </h1>
-            <p className="text-2xl md:text-3xl text-blue-100 mb-12 font-light">
-              Fast. Luxurious. Unforgettable
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 transform hover:-translate-y-1">
-                Explore Fleet
-              </button>
-              <button className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-gray-900 transition-all duration-300">
-                Learn More
-              </button>
-            </div>
-          </div>
+        {/* Navigation Arrows */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 group"
+          onMouseEnter={() => setIsAutoPlaying(false)}
+          onMouseLeave={() => setIsAutoPlaying(true)}
+        >
+          <svg className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        <button
+          onClick={nextSlide}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 group"
+          onMouseEnter={() => setIsAutoPlaying(false)}
+          onMouseLeave={() => setIsAutoPlaying(true)}
+        >
+          <svg className="w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        {/* Dots Navigation */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-3">
+          {heroSlides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === currentSlide
+                  ? 'bg-white scale-125'
+                  : 'bg-white/50 hover:bg-white/75'
+              }`}
+              onMouseEnter={() => setIsAutoPlaying(false)}
+              onMouseLeave={() => setIsAutoPlaying(true)}
+            />
+          ))}
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <div className="absolute bottom-8 right-8 animate-bounce">
           <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
             <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
           </div>
         </div>
+
+        {/* Play/Pause Button */}
+        <button
+          onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+          className="absolute top-8 right-8 z-20 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300"
+        >
+          {isAutoPlaying ? (
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+            </svg>
+          ) : (
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          )}
+        </button>
       </section>
 
       {/* Search Section */}
