@@ -136,6 +136,15 @@ export default function Home() {
       period: "per day",
       image: "/api/placeholder/400/300",
       category: "Compact SUV"
+    },
+    {
+      id: 7,
+      name: "BMW M8 Competition",
+      price: "1800",
+      currency: "د.إ",
+      period: "per day",
+      image: "/api/placeholder/400/300",
+      category: "Luxury Coupe"
     }
   ];
 
@@ -164,29 +173,29 @@ export default function Home() {
               
               {/* Animated background elements */}
               <div className="absolute inset-0">
-                <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-                <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-cyan-500/10 rounded-full blur-2xl animate-float"></div>
+                <div className="absolute top-10 left-4 md:top-20 md:left-10 w-32 h-32 md:w-72 md:h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-10 right-4 md:bottom-20 md:right-10 w-48 h-48 md:w-96 md:h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+                <div className="absolute top-1/2 left-1/4 w-24 h-24 md:w-48 md:h-48 bg-cyan-500/10 rounded-full blur-2xl animate-float"></div>
               </div>
 
               {/* Content */}
               <div className="relative z-10 h-full flex items-center justify-center">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                   <div className="animate-fadeInUp">
-                    <h1 className="text-6xl md:text-8xl font-bold text-white mb-8 leading-tight">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-6 md:mb-8 leading-tight">
                       {slide.title}<br />
                       <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                         {slide.subtitle}
                       </span>
                     </h1>
-                    <p className="text-2xl md:text-3xl text-blue-100 mb-12 font-light">
+                    <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-blue-100 mb-8 md:mb-12 font-light px-4">
                       {slide.description}
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 transform hover:-translate-y-1">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
+                      <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 transform hover:-translate-y-1">
                         {slide.buttonText}
                       </button>
-                      <button className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-gray-900 transition-all duration-300">
+                      <button className="border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-white hover:text-gray-900 transition-all duration-300">
                         {slide.buttonSecondary}
                       </button>
                     </div>
@@ -197,36 +206,36 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Navigation Arrows */}
+        {/* Navigation Arrows - Hidden on mobile */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 group"
+          className="hidden sm:flex absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full items-center justify-center text-white hover:bg-white/30 transition-all duration-300 group"
           onMouseEnter={() => setIsAutoPlaying(false)}
           onMouseLeave={() => setIsAutoPlaying(true)}
         >
-          <svg className="w-6 h-6 transform group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 md:w-6 md:h-6 transform group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
 
         <button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 group"
+          className="hidden sm:flex absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full items-center justify-center text-white hover:bg-white/30 transition-all duration-300 group"
           onMouseEnter={() => setIsAutoPlaying(false)}
           onMouseLeave={() => setIsAutoPlaying(true)}
         >
-          <svg className="w-6 h-6 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 md:w-6 md:h-6 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
 
         {/* Dots Navigation */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-3">
+        <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2 md:space-x-3">
           {heroSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
                 index === currentSlide
                   ? 'bg-white scale-125'
                   : 'bg-white/50 hover:bg-white/75'
@@ -237,24 +246,24 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 right-8 animate-bounce">
+        {/* Scroll indicator - Hidden on mobile */}
+        <div className="hidden md:block absolute bottom-8 right-8 animate-bounce">
           <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
             <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
           </div>
         </div>
 
-        {/* Play/Pause Button */}
+        {/* Play/Pause Button - Hidden on mobile */}
         <button
           onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-          className="absolute top-8 right-8 z-20 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300"
+          className="hidden sm:flex absolute top-4 md:top-8 right-4 md:right-8 z-20 w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full items-center justify-center text-white hover:bg-white/30 transition-all duration-300"
         >
           {isAutoPlaying ? (
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
             </svg>
           ) : (
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z"/>
             </svg>
           )}
@@ -262,17 +271,17 @@ export default function Home() {
       </section>
 
       {/* Search Section */}
-      <section className="py-20 bg-white relative">
+      <section className="py-12 md:py-20 bg-white relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold text-gray-900 mb-6">Find Your Dream Car</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 md:mb-6">Find Your Dream Car</h2>
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
               Discover our premium collection of luxury vehicles and find the perfect ride for your journey
             </p>
           </div>
           
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-2xl p-8 md:p-12">
-            <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12">
+            <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-gray-700">Car Make</label>
                 <select 
@@ -320,10 +329,10 @@ export default function Home() {
                 </select>
               </div>
               
-              <div className="flex items-end">
+              <div className="flex items-end sm:col-span-2 lg:col-span-1">
                 <button 
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 md:py-4 px-4 md:px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   Search Cars
                 </button>
@@ -343,35 +352,35 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {luxuryCars.map((car) => (
               <div key={car.id} className="group bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2">
                 <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
-                    <span className="text-sm font-semibold text-gray-700">{car.category}</span>
+                  <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full">
+                    <span className="text-xs font-semibold text-gray-700">{car.category}</span>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-8xl opacity-20 group-hover:scale-110 transition-transform duration-500">🚗</div>
+                    <div className="text-6xl opacity-20 group-hover:scale-110 transition-transform duration-500">🚗</div>
                   </div>
                 </div>
                 
-                <div className="p-8">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">{car.name}</h3>
-                  <div className="flex items-center justify-between mb-6">
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{car.name}</h3>
+                  <div className="flex items-center justify-between mb-3">
                     <div>
-                      <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                         {car.price} {car.currency}
                       </span>
-                      <span className="text-gray-600 ml-2">{car.period}</span>
+                      <span className="text-sm text-gray-600 ml-2">{car.period}</span>
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-3">
-                    <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                  <div className="grid grid-cols-2 gap-2">
+                    <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
                       Inquire Now
                     </button>
-                    <button className="bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 px-4 rounded-xl font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300 shadow-lg hover:shadow-xl">
+                    <button className="bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300 shadow-lg hover:shadow-xl">
                       WhatsApp
                     </button>
                   </div>
@@ -396,30 +405,30 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             <div className="text-center group">
-              <div className="text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2 md:mb-4 group-hover:scale-110 transition-transform duration-300">
                 150+
               </div>
-              <div className="text-lg font-semibold text-blue-100">VEHICLES STOCK</div>
+              <div className="text-base sm:text-lg md:text-xl font-semibold text-blue-100">VEHICLES STOCK</div>
             </div>
             <div className="text-center group">
-              <div className="text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2 md:mb-4 group-hover:scale-110 transition-transform duration-300">
                 1000+
               </div>
-              <div className="text-lg font-semibold text-blue-100">RENTALS COMPLETED</div>
+              <div className="text-base sm:text-lg md:text-xl font-semibold text-blue-100">RENTALS COMPLETED</div>
             </div>
             <div className="text-center group">
-              <div className="text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2 md:mb-4 group-hover:scale-110 transition-transform duration-300">
                 500+
               </div>
-              <div className="text-lg font-semibold text-blue-100">HAPPY CLIENTS</div>
+              <div className="text-base sm:text-lg md:text-xl font-semibold text-blue-100">HAPPY CLIENTS</div>
             </div>
             <div className="text-center group">
-              <div className="text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2 md:mb-4 group-hover:scale-110 transition-transform duration-300">
                 1000+
               </div>
-              <div className="text-lg font-semibold text-blue-100">5-STAR REVIEWS</div>
+              <div className="text-base sm:text-lg md:text-xl font-semibold text-blue-100">5-STAR REVIEWS</div>
             </div>
           </div>
         </div>
