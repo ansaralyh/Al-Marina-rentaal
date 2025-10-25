@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
 export default function Blog() {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -238,7 +240,10 @@ export default function Blog() {
                           <p className="text-sm text-gray-500">{new Date(post.date).toLocaleDateString()}</p>
                         </div>
                       </div>
-                      <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300">
+                      <button 
+                        onClick={() => router.push(`/blogs/${post.id}`)}
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+                      >
                         Read More
                       </button>
                     </div>
@@ -290,7 +295,10 @@ export default function Blog() {
                         <p className="text-xs text-gray-500">{new Date(post.date).toLocaleDateString()}</p>
                       </div>
                     </div>
-                    <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
+                    <button 
+                      onClick={() => router.push(`/blogs/${post.id}`)}
+                      className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                    >
                       Read More →
                     </button>
                   </div>
