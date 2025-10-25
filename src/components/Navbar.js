@@ -57,14 +57,22 @@ export default function Navbar() {
               Services
             </Link>
             <Link 
-              href="/#fleet" 
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+              href="/fleet" 
+              className={`font-medium transition-colors ${
+                isActive('/fleet') 
+                  ? 'text-blue-600' 
+                  : 'text-gray-700 hover:text-blue-600'
+              }`}
             >
               Our Fleet
             </Link>
             <Link 
-              href="/#contact" 
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+              href="/contactus" 
+              className={`font-medium transition-colors ${
+                isActive('/contactus') 
+                  ? 'text-blue-600' 
+                  : 'text-gray-700 hover:text-blue-600'
+              }`}
             >
               Contact Us
             </Link>
