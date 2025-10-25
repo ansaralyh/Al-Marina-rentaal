@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import InquiryPopup from "../components/InquiryPopup";
 
 export default function Home() {
   const [searchForm, setSearchForm] = useState({
@@ -13,10 +14,22 @@ export default function Home() {
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isInquiryOpen, setIsInquiryOpen] = useState(false);
+  const [selectedCar, setSelectedCar] = useState("");
 
   const handleSearch = (e) => {
     e.preventDefault();
     console.log("Search:", searchForm);
+  };
+
+  const handleInquiryClick = (carName) => {
+    setSelectedCar(carName);
+    setIsInquiryOpen(true);
+  };
+
+  const handleCloseInquiry = () => {
+    setIsInquiryOpen(false);
+    setSelectedCar("");
   };
 
   // Hero slider data
@@ -427,7 +440,10 @@ export default function Home() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
-                    <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                    <button 
+                      onClick={() => handleInquiryClick(car.name)}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    >
                       Inquire Now
                     </button>
                     <button className="bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300 shadow-lg hover:shadow-xl">
@@ -665,6 +681,13 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Inquiry Popup */}
+      <InquiryPopup 
+        isOpen={isInquiryOpen}
+        onClose={handleCloseInquiry}
+        carName={selectedCar}
+      />
 
       <Footer />
     </div>
