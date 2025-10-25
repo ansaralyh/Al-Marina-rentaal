@@ -67,6 +67,16 @@ export default function Navbar() {
               Our Fleet
             </Link>
             <Link 
+              href="/blogs" 
+              className={`font-medium transition-colors ${
+                isActive('/blogs') 
+                  ? 'text-blue-600' 
+                  : 'text-gray-700 hover:text-blue-600'
+              }`}
+            >
+              Blog
+            </Link>
+            <Link 
               href="/contactus" 
               className={`font-medium transition-colors ${
                 isActive('/contactus') 
