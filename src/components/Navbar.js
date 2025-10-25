@@ -103,7 +103,7 @@ export default function Navbar() {
           {/* Desktop Contact & CTA */}
           <div className="hidden lg:flex items-center space-x-4">
             <div className="hidden xl:block text-sm text-gray-600">
-              <span className="font-medium">Call:</span> +971 55 566 0466
+              <span className="font-medium">Call:</span> +971 50 209 3966
             </div>
             <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 xl:px-6 py-2 xl:py-3 rounded-full font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-sm xl:text-base">
               Book Now
@@ -113,7 +113,7 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center space-x-2">
             <div className="hidden sm:block text-xs text-gray-600">
-              <span className="font-medium">Call:</span> +971 55 566 0466
+              <span className="font-medium">Call:</span> +971 50 209 3966
             </div>
             <button
               onClick={toggleMobileMenu}

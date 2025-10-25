@@ -219,7 +219,7 @@ export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicl
           <div className="flex items-center justify-between text-sm text-gray-600">
             <div className="flex items-center">
               <span className="text-blue-600 mr-2">📞</span>
-              <span>+971 55 566 0466</span>
+              <span>+971 50 209 3966</span>
             </div>
             <div className="flex items-center">
               <span className="text-blue-600 mr-2">📧</span>

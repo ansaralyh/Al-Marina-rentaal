@@ -649,8 +649,8 @@ export default function Home() {
                 <span className="text-3xl">📞</span>
               </div>
               <h3 className="text-2xl font-bold mb-4">Call Us</h3>
-              <p className="text-blue-100 text-lg">+971 56 5114114</p>
-              <p className="text-blue-100 text-lg">+971 55 5660466</p>
+              <p className="text-blue-100 text-lg">+971 50 209 3966</p>
+              <p className="text-blue-100 text-lg">+971 52 408 9346</p>
             </div>
 
             <div className="text-center group">
