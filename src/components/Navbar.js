@@ -29,10 +29,10 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2 md:space-x-3" onClick={closeMobileMenu}>
               <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm md:text-lg">M</span>
+                <span className="text-white font-bold text-sm md:text-lg">NM</span>
               </div>
               <h1 className="text-lg md:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                Marina Rental
+                Noor Al Marina Car Rental
               </h1>
             </Link>
           </div>
