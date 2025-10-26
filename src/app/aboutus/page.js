@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { Car, Trophy, Handshake, Star, Award, Shield, Users, Clock, Linkedin, Twitter, Car as CarIcon } from 'lucide-react';
 
 export default function AboutUs() {
   const [activeTab, setActiveTab] = useState('story');
@@ -56,22 +57,22 @@ export default function AboutUs() {
 
   const companyValues = [
     {
-      icon: "🏆",
+      icon: <Trophy className="w-16 h-16 text-yellow-500" />,
       title: "Excellence",
       description: "We strive for perfection in every aspect of our service, from vehicle selection to customer care."
     },
     {
-      icon: "🤝",
+      icon: <Handshake className="w-16 h-16 text-blue-500" />,
       title: "Trust",
       description: "Building lasting relationships through transparency, reliability, and consistent quality service."
     },
     {
-      icon: "🚗",
+      icon: <Car className="w-16 h-16 text-red-500" />,
       title: "Passion",
       description: "Our love for luxury automobiles drives us to provide the most exceptional rental experiences."
     },
     {
-      icon: "⭐",
+      icon: <Star className="w-16 h-16 text-purple-500" />,
       title: "Innovation",
       description: "Continuously improving our services and embracing new technologies to enhance customer experience."
     }
@@ -145,7 +146,7 @@ export default function AboutUs() {
               <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl p-8 shadow-2xl">
                 <div className="text-center">
                   <div className="w-32 h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="text-white text-4xl">🚗</span>
+                    <CarIcon className="w-16 h-16 text-white" />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
                   <p className="text-gray-600">
@@ -171,7 +172,7 @@ export default function AboutUs() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {companyValues.map((value, index) => (
               <div key={index} className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 text-center">
-                <div className="text-6xl mb-6">{value.icon}</div>
+                <div className="mb-6 flex items-center justify-center mx-auto mb-6">{value.icon}</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">{value.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{value.description}</p>
               </div>
@@ -194,17 +195,17 @@ export default function AboutUs() {
             {teamMembers.map((member) => (
               <div key={member.id} className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 text-center">
                 <div className="w-32 h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-white text-4xl">👤</span>
+                  <Users className="w-16 h-16 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
                 <p className="text-blue-600 font-semibold mb-4">{member.position}</p>
                 <p className="text-gray-600 text-sm mb-6">{member.description}</p>
                 <div className="flex justify-center space-x-4">
                   <a href={member.social.linkedin} className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors">
-                    <span className="text-sm">in</span>
+                    <Linkedin className="w-4 h-4" />
                   </a>
                   <a href={member.social.twitter} className="w-8 h-8 bg-blue-400 rounded-full flex items-center justify-center text-white hover:bg-blue-500 transition-colors">
-                    <span className="text-sm">🐦</span>
+                    <Twitter className="w-4 h-4" />
                   </a>
                 </div>
               </div>
@@ -249,7 +250,9 @@ export default function AboutUs() {
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-500">
-              <div className="text-5xl mb-6">🏆</div>
+              <div className="mb-6 flex items-center justify-center">
+                <Trophy className="w-12 h-12 text-yellow-500" />
+              </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Premium Fleet</h3>
               <p className="text-gray-600 leading-relaxed">
                 Our carefully curated collection features only the finest luxury vehicles, each maintained to the highest standards and regularly updated with the latest models.
@@ -257,7 +260,9 @@ export default function AboutUs() {
             </div>
             
             <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-500">
-              <div className="text-5xl mb-6">🛡️</div>
+              <div className="mb-6 flex items-center justify-center">
+                <Shield className="w-12 h-12 text-green-500" />
+              </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Complete Insurance</h3>
               <p className="text-gray-600 leading-relaxed">
                 Comprehensive insurance coverage for all rentals, giving you peace of mind and complete protection during your luxury driving experience.
@@ -265,7 +270,9 @@ export default function AboutUs() {
             </div>
             
             <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-500">
-              <div className="text-5xl mb-6">⭐</div>
+              <div className="mb-6 flex items-center justify-center">
+                <Clock className="w-12 h-12 text-blue-500" />
+              </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">24/7 Support</h3>
               <p className="text-gray-600 leading-relaxed">
                 Round-the-clock customer support ensures assistance whenever you need it, with dedicated professionals ready to help with any requirements.

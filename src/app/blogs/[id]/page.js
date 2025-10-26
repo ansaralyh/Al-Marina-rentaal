@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Navbar from '../../../components/Navbar';
 import Footer from '../../../components/Footer';
+import { Car, Zap, Truck, DollarSign, Clock, Calendar, User, Camera } from 'lucide-react';
 
 export default function SingleBlog() {
   const params = useParams();
@@ -56,7 +57,7 @@ A luxury car rental in Dubai isn't just about transportation—it's about creati
       author: "Ahmed Al-Rashid",
       date: "2025-01-15",
       readTime: "5 min read",
-      image: "🚗",
+      image: <Car className="w-16 h-16 text-blue-500" />,
       featured: true,
       tags: ["Luxury Cars", "Dubai", "Rental Guide"]
     },
@@ -115,7 +116,7 @@ An exotic car rental for a special occasion isn't just about the car—it's abou
       author: "Sarah Johnson",
       date: "2025-01-12",
       readTime: "7 min read",
-      image: "🏎️",
+      image: <Zap className="w-16 h-16 text-red-500" />,
       featured: false,
       tags: ["Exotic Cars", "Special Events", "Luxury"]
     },
@@ -205,7 +206,7 @@ Remember, the goal is to have a safe, enjoyable experience that creates lasting 
       author: "Michael Chen",
       date: "2025-01-10",
       readTime: "6 min read",
-      image: "🚙",
+      image: <Truck className="w-16 h-16 text-green-500" />,
       featured: false,
       tags: ["Driving Tips", "Luxury Cars", "Safety"]
     },
@@ -354,7 +355,7 @@ Dubai's unique landscape and architecture provide endless opportunities for stun
       author: "Emma Rodriguez",
       date: "2025-01-08",
       readTime: "8 min read",
-      image: "📸",
+      image: <Camera className="w-16 h-16 text-purple-500" />,
       featured: true,
       tags: ["Photography", "Dubai", "Luxury Cars"]
     },
@@ -520,7 +521,7 @@ Consider starting with rentals to understand your preferences and usage patterns
       author: "David Thompson",
       date: "2025-01-05",
       readTime: "10 min read",
-      image: "💰",
+      image: <DollarSign className="w-16 h-16 text-yellow-500" />,
       featured: false,
       tags: ["Financial Planning", "Luxury Cars", "Investment"]
     }
@@ -592,7 +593,7 @@ Consider starting with rentals to understand your preferences and usage patterns
           <div className="text-center mb-8">
             <button
               onClick={handleBackToBlogs}
-              className="inline-flex items-center text-blue-200 hover:text-white transition-colors mb-6"
+              className="mt-10 inline-flex items-center text-blue-200 hover:text-white transition-colors mb-6"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -600,7 +601,7 @@ Consider starting with rentals to understand your preferences and usage patterns
               Back to Blogs
             </button>
             
-            <div className="text-6xl mb-6">{blogPost.image}</div>
+            <div className="mb-6 flex items-center justify-center">{blogPost.image}</div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight">
               {blogPost.title}
             </h1>
@@ -610,15 +611,15 @@ Consider starting with rentals to understand your preferences and usage patterns
             
             <div className="flex flex-wrap justify-center items-center gap-6 text-blue-200">
               <div className="flex items-center">
-                <span className="text-2xl mr-2">👤</span>
+                <User className="w-6 h-6 mr-2" />
                 <span className="font-medium">{blogPost.author}</span>
               </div>
               <div className="flex items-center">
-                <span className="text-2xl mr-2">📅</span>
+                <Calendar className="w-6 h-6 mr-2" />
                 <span>{new Date(blogPost.date).toLocaleDateString()}</span>
               </div>
               <div className="flex items-center">
-                <span className="text-2xl mr-2">⏱️</span>
+                <Clock className="w-6 h-6 mr-2" />
                 <span>{blogPost.readTime}</span>
               </div>
             </div>
@@ -628,7 +629,7 @@ Consider starting with rentals to understand your preferences and usage patterns
 
       {/* Blog Content */}
       <section className="py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
             <div className="p-8 md:p-12">
               <div className="prose prose-lg max-w-none">

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { FileText, Trophy, Lightbulb, PartyPopper, Newspaper, Car, Zap, Briefcase, Battery, Wrench, Camera, Search } from 'lucide-react';
 
 export default function Blog() {
   const router = useRouter();
@@ -11,11 +12,11 @@ export default function Blog() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const blogCategories = [
-    { id: 'all', name: 'All Posts', icon: '📝' },
-    { id: 'luxury', name: 'Luxury Cars', icon: '🏆' },
-    { id: 'tips', name: 'Driving Tips', icon: '💡' },
-    { id: 'events', name: 'Events', icon: '🎉' },
-    { id: 'news', name: 'Industry News', icon: '📰' }
+    { id: 'all', name: 'All Posts', icon: <FileText className="w-5 h-5 text-blue-500" /> },
+    { id: 'luxury', name: 'Luxury Cars', icon: <Trophy className="w-5 h-5 text-yellow-500" /> },
+    { id: 'tips', name: 'Driving Tips', icon: <Lightbulb className="w-5 h-5 text-orange-500" /> },
+    { id: 'events', name: 'Events', icon: <PartyPopper className="w-5 h-5 text-purple-500" /> },
+    { id: 'news', name: 'Industry News', icon: <Newspaper className="w-5 h-5 text-green-500" /> }
   ];
 
   const blogPosts = [
@@ -28,7 +29,7 @@ export default function Blog() {
       author: "Ahmed Al-Rashid",
       date: "2025-01-15",
       readTime: "5 min read",
-      image: "🚗",
+      image: <Car className="w-16 h-16 text-blue-500" />,
       featured: true,
       tags: ["Luxury Cars", "Dubai", "Rental Guide"]
     },
@@ -41,7 +42,7 @@ export default function Blog() {
       author: "Sarah Johnson",
       date: "2025-01-12",
       readTime: "7 min read",
-      image: "🏎️",
+      image: <Zap className="w-16 h-16 text-red-500" />,
       featured: false,
       tags: ["Exotic Cars", "Special Events", "Luxury"]
     },
@@ -54,7 +55,7 @@ export default function Blog() {
       author: "Mohammed Hassan",
       date: "2025-01-10",
       readTime: "4 min read",
-      image: "💡",
+      image: <Lightbulb className="w-16 h-16 text-yellow-500" />,
       featured: false,
       tags: ["Driving Tips", "Safety", "Beginners"]
     },
@@ -67,7 +68,7 @@ export default function Blog() {
       author: "Emma Wilson",
       date: "2025-01-08",
       readTime: "6 min read",
-      image: "💼",
+      image: <Briefcase className="w-16 h-16 text-gray-500" />,
       featured: false,
       tags: ["Corporate", "Business", "Events"]
     },
@@ -80,7 +81,7 @@ export default function Blog() {
       author: "Ahmed Al-Rashid",
       date: "2025-01-05",
       readTime: "8 min read",
-      image: "⚡",
+      image: <Battery className="w-16 h-16 text-green-500" />,
       featured: true,
       tags: ["Electric Cars", "Sustainability", "Future"]
     },
@@ -93,7 +94,7 @@ export default function Blog() {
       author: "Sarah Johnson",
       date: "2025-01-03",
       readTime: "5 min read",
-      image: "💒",
+      image: <PartyPopper className="w-16 h-16 text-pink-500" />,
       featured: false,
       tags: ["Wedding", "Special Events", "Luxury"]
     },
@@ -106,7 +107,7 @@ export default function Blog() {
       author: "Mohammed Hassan",
       date: "2025-01-01",
       readTime: "6 min read",
-      image: "🔧",
+      image: <Wrench className="w-16 h-16 text-gray-600" />,
       featured: false,
       tags: ["Maintenance", "Care", "Quality"]
     },
@@ -119,7 +120,7 @@ export default function Blog() {
       author: "Emma Wilson",
       date: "2024-12-28",
       readTime: "4 min read",
-      image: "📸",
+      image: <Camera className="w-16 h-16 text-purple-500" />,
       featured: false,
       tags: ["Photography", "Dubai", "Social Media"]
     }
@@ -174,7 +175,7 @@ export default function Blog() {
                   className="w-full px-6 py-4 pl-12 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                 />
                 <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  🔍
+                  <Search className="w-5 h-5" />
                 </div>
               </div>
             </div>
@@ -191,7 +192,7 @@ export default function Blog() {
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  <span>{category.icon}</span>
+                  <span className="flex items-center">{category.icon}</span>
                   <span className="font-medium">{category.name}</span>
                 </button>
               ))}
@@ -213,7 +214,7 @@ export default function Blog() {
               {featuredPosts.map((post) => (
                 <article key={post.id} className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
                   <div className="h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative">
-                    <div className="text-8xl opacity-60">{post.image}</div>
+                    <div className="opacity-60">{post.image}</div>
                     <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full">
                       <span className="text-sm font-semibold">Featured</span>
                     </div>
@@ -271,7 +272,7 @@ export default function Blog() {
             {regularPosts.map((post) => (
               <article key={post.id} className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
                 <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <div className="text-6xl opacity-70">{post.image}</div>
+                  <div className="opacity-70">{post.image}</div>
                 </div>
                 
                 <div className="p-6">

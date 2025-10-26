@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { Car, Trophy, Zap, Truck, Gem, Car as CarIcon } from 'lucide-react';
 
 export default function Fleet() {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -10,11 +11,11 @@ export default function Fleet() {
   const [sortBy, setSortBy] = useState('name');
 
   const vehicleCategories = [
-    { id: 'all', name: 'All Vehicles', icon: '🚗' },
-    { id: 'luxury', name: 'Luxury Cars', icon: '🏆' },
-    { id: 'sports', name: 'Sports Cars', icon: '🏎️' },
-    { id: 'suv', name: 'Luxury SUVs', icon: '🚙' },
-    { id: 'exotic', name: 'Exotic Cars', icon: '💎' }
+    { id: 'all', name: 'All Vehicles', icon: <Car className="w-5 h-5 text-blue-500" /> },
+    { id: 'luxury', name: 'Luxury Cars', icon: <Trophy className="w-5 h-5 text-yellow-500" /> },
+    { id: 'sports', name: 'Sports Cars', icon: <Zap className="w-5 h-5 text-red-500" /> },
+    { id: 'suv', name: 'Luxury SUVs', icon: <Truck className="w-5 h-5 text-green-500" /> },
+    { id: 'exotic', name: 'Exotic Cars', icon: <Gem className="w-5 h-5 text-purple-500" /> }
   ];
 
   const priceRanges = [
@@ -33,7 +34,7 @@ export default function Fleet() {
       price: 3500,
       currency: "د.إ",
       period: "per day",
-      image: "🚗",
+      image: <CarIcon className="w-16 h-16 text-orange-500" />,
       specifications: {
         engine: "4.0L V8 Twin Turbo",
         power: "641 HP",
@@ -55,7 +56,7 @@ export default function Fleet() {
       price: 9500,
       currency: "د.إ",
       period: "per day",
-      image: "🏎️",
+      image: <Zap className="w-16 h-16 text-red-500" />,
       specifications: {
         engine: "6.5L V12",
         power: "715 HP",
@@ -77,7 +78,7 @@ export default function Fleet() {
       price: 3700,
       currency: "د.إ",
       period: "per day",
-      image: "🏎️",
+      image: <Zap className="w-16 h-16 text-red-500" />,
       specifications: {
         engine: "3.9L V8 Twin Turbo",
         power: "710 HP",
@@ -99,7 +100,7 @@ export default function Fleet() {
       price: 3200,
       currency: "د.إ",
       period: "per day",
-      image: "🏎️",
+      image: <Zap className="w-16 h-16 text-red-500" />,
       specifications: {
         engine: "3.8L Flat-6 Twin Turbo",
         power: "640 HP",
@@ -121,7 +122,7 @@ export default function Fleet() {
       price: 2400,
       currency: "د.إ",
       period: "per day",
-      image: "🚙",
+      image: <Truck className="w-16 h-16 text-blue-500" />,
       specifications: {
         engine: "5.0L V8 Supercharged",
         power: "525 HP",
@@ -143,7 +144,7 @@ export default function Fleet() {
       price: 550,
       currency: "د.إ",
       period: "per day",
-      image: "🚙",
+      image: <Truck className="w-16 h-16 text-blue-500" />,
       specifications: {
         engine: "2.0L TFSI",
         power: "230 HP",
@@ -165,7 +166,7 @@ export default function Fleet() {
       price: 1200,
       currency: "د.إ",
       period: "per day",
-      image: "🚗",
+      image: <CarIcon className="w-16 h-16 text-orange-500" />,
       specifications: {
         engine: "3.0L V6 Turbo",
         power: "362 HP",
@@ -187,7 +188,7 @@ export default function Fleet() {
       price: 1800,
       currency: "د.إ",
       period: "per day",
-      image: "🚙",
+      image: <Truck className="w-16 h-16 text-blue-500" />,
       specifications: {
         engine: "4.4L V8 Twin Turbo",
         power: "523 HP",
@@ -209,7 +210,7 @@ export default function Fleet() {
       price: 800,
       currency: "د.إ",
       period: "per day",
-      image: "🚗",
+      image: <CarIcon className="w-16 h-16 text-orange-500" />,
       specifications: {
         engine: "Dual Motor Electric",
         power: "670 HP",
@@ -231,7 +232,7 @@ export default function Fleet() {
       price: 4500,
       currency: "د.إ",
       period: "per day",
-      image: "🚗",
+      image: <CarIcon className="w-16 h-16 text-orange-500" />,
       specifications: {
         engine: "6.75L V12",
         power: "563 HP",
@@ -312,7 +313,7 @@ export default function Fleet() {
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
-                    <span>{category.icon}</span>
+                    <span className="flex items-center">{category.icon}</span>
                     <span className="font-medium">{category.name}</span>
                   </button>
                 ))}
@@ -371,7 +372,7 @@ export default function Fleet() {
               <div key={vehicle.id} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
                 {/* Vehicle Image */}
                 <div className="h-48 bg-gray-100 flex items-center justify-center">
-                  <div className="text-6xl opacity-70">{vehicle.image}</div>
+                  <div className="opacity-70">{vehicle.image}</div>
                 </div>
 
                 {/* Vehicle Info */}

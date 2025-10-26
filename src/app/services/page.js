@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { Trophy, Car, Briefcase, PartyPopper, Shield, Car as CarIcon, User, Phone, Plane, Wrench, Check } from 'lucide-react';
 
 export default function Services() {
   const [activeService, setActiveService] = useState('luxury');
@@ -11,25 +12,25 @@ export default function Services() {
     {
       id: 'luxury',
       title: 'Luxury Car Rental',
-      icon: '🏆',
+      icon: <Trophy className="w-10 h-10 text-yellow-500" />,
       description: 'Premium luxury vehicles for special occasions and business needs'
     },
     {
       id: 'exotic',
       title: 'Exotic Car Rental',
-      icon: '🚗',
+      icon: <Car className="w-10 h-10 text-red-500" />,
       description: 'Supercars and exotic vehicles for unforgettable experiences'
     },
     {
       id: 'corporate',
       title: 'Corporate Services',
-      icon: '💼',
+      icon: <Briefcase className="w-10 h-10 text-blue-500" />,
       description: 'Business car rental solutions for corporate clients'
     },
     {
       id: 'events',
       title: 'Event Services',
-      icon: '🎉',
+      icon: <PartyPopper className="w-10 h-10 text-purple-500" />,
       description: 'Special event car rentals for weddings, parties, and celebrations'
     }
   ];
@@ -40,21 +41,21 @@ export default function Services() {
       description: "Luxury sedans from Mercedes, BMW, Audi for business and formal occasions",
       features: ["Chauffeur Service", "Airport Transfer", "Business Meetings", "Formal Events"],
       price: "From 800 د.إ/day",
-      image: "🚙"
+      image: <CarIcon className="w-16 h-16 text-blue-500" />
     },
     {
       name: "Luxury SUVs",
       description: "High-end SUVs like Range Rover, Porsche Cayenne for comfort and style",
       features: ["Family Trips", "Airport Pickup", "City Tours", "Business Travel"],
       price: "From 1200 د.إ/day",
-      image: "🚙"
+      image: <CarIcon className="w-16 h-16 text-green-500" />
     },
     {
       name: "Executive Cars",
       description: "Top-tier executive vehicles for VIP transportation",
       features: ["VIP Service", "24/7 Support", "Premium Comfort", "Professional Driver"],
       price: "From 1500 د.إ/day",
-      image: "🚙"
+      image: <CarIcon className="w-16 h-16 text-purple-500" />
     }
   ];
 
@@ -64,21 +65,21 @@ export default function Services() {
       description: "Experience the thrill of driving a Ferrari - the ultimate supercar",
       features: ["F8 Spider", "Purosangue", "488 GTB", "SF90 Stradale"],
       price: "From 3500 د.إ/day",
-      image: "🏎️"
+      image: <CarIcon className="w-16 h-16 text-red-500" />
     },
     {
       name: "Lamborghini Fleet",
       description: "Drive the legendary Lamborghini supercars with unmatched performance",
       features: ["Urus", "Huracán", "Aventador", "Custom Modifications"],
       price: "From 4000 د.إ/day",
-      image: "🏎️"
+      image: <CarIcon className="w-16 h-16 text-orange-500" />
     },
     {
       name: "Porsche Sports Cars",
       description: "German engineering excellence with Porsche 911 and other models",
       features: ["911 Turbo S", "Cayman GT4", "Panamera", "Macan GTS"],
       price: "From 2500 د.إ/day",
-      image: "🏎️"
+      image: <CarIcon className="w-16 h-16 text-gray-600" />
     }
   ];
 
@@ -88,21 +89,21 @@ export default function Services() {
       description: "Complete fleet management solutions for corporate clients",
       features: ["Fleet Maintenance", "Driver Services", "Insurance Coverage", "24/7 Support"],
       price: "Custom Pricing",
-      image: "🏢"
+      image: <Briefcase className="w-16 h-16 text-blue-500" />
     },
     {
       name: "Executive Transportation",
       description: "Professional transportation for executives and VIP clients",
       features: ["Airport Transfers", "Business Meetings", "City Tours", "Event Transportation"],
       price: "From 1000 د.إ/day",
-      image: "🏢"
+      image: <Briefcase className="w-16 h-16 text-green-500" />
     },
     {
       name: "Long-term Rentals",
       description: "Extended rental periods with special corporate rates",
       features: ["Monthly Contracts", "Fleet Discounts", "Maintenance Included", "Flexible Terms"],
       price: "From 2000 د.إ/month",
-      image: "🏢"
+      image: <Briefcase className="w-16 h-16 text-purple-500" />
     }
   ];
 
@@ -112,52 +113,52 @@ export default function Services() {
       description: "Luxury vehicles for your special day - from classic to modern",
       features: ["Bridal Cars", "Groom's Cars", "Guest Transportation", "Photo Shoots"],
       price: "From 1200 د.إ/day",
-      image: "💒"
+      image: <PartyPopper className="w-16 h-16 text-pink-500" />
     },
     {
       name: "Party Transportation",
       description: "Group transportation for parties, celebrations, and events",
       features: ["Party Buses", "Luxury Vans", "Group Bookings", "Event Coordination"],
       price: "From 800 د.إ/day",
-      image: "🎉"
+      image: <PartyPopper className="w-16 h-16 text-purple-500" />
     },
     {
       name: "Special Occasions",
       description: "Unique vehicles for birthdays, anniversaries, and celebrations",
       features: ["Themed Cars", "Photo Opportunities", "Custom Decorations", "Memorable Experiences"],
       price: "From 1000 د.إ/day",
-      image: "🎂"
+      image: <PartyPopper className="w-16 h-16 text-yellow-500" />
     }
   ];
 
   const serviceFeatures = [
     {
-      icon: "🛡️",
+      icon: <Shield className="w-12 h-12 text-green-500" />,
       title: "Full Insurance Coverage",
       description: "Comprehensive insurance for all rentals with zero deductible options"
     },
     {
-      icon: "🚗",
+      icon: <CarIcon className="w-12 h-12 text-blue-500" />,
       title: "Latest Model Fleet",
       description: "Regularly updated fleet with the newest luxury and exotic vehicles"
     },
     {
-      icon: "👨‍💼",
+      icon: <User className="w-12 h-12 text-purple-500" />,
       title: "Professional Drivers",
       description: "Experienced and licensed chauffeurs for premium service"
     },
     {
-      icon: "📱",
+      icon: <Phone className="w-12 h-12 text-orange-500" />,
       title: "24/7 Support",
       description: "Round-the-clock customer support for all your needs"
     },
     {
-      icon: "✈️",
+      icon: <Plane className="w-12 h-12 text-cyan-500" />,
       title: "Airport Services",
       description: "Seamless airport pickup and drop-off services"
     },
     {
-      icon: "🔧",
+      icon: <Wrench className="w-12 h-12 text-gray-500" />,
       title: "Maintenance Included",
       description: "All vehicles maintained to the highest standards"
     }
@@ -266,7 +267,7 @@ export default function Services() {
                     : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
                 }`}
               >
-                <div className="text-4xl mb-4">{category.icon}</div>
+                <div className="mb-4 flex items-center justify-center">{category.icon}</div>
                 <h3 className="text-xl font-bold mb-2">{category.title}</h3>
                 <p className="text-sm opacity-80">{category.description}</p>
               </button>
@@ -290,7 +291,7 @@ export default function Services() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {getCurrentServices().map((service, index) => (
               <div key={index} className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2">
-                <div className="text-6xl mb-6 text-center">{service.image}</div>
+                <div className="mb-6 flex items-center justify-center">{service.image}</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">{service.name}</h3>
                 <p className="text-gray-600 mb-6">{service.description}</p>
                 
@@ -299,7 +300,7 @@ export default function Services() {
                   <ul className="space-y-2">
                     {service.features.map((feature, idx) => (
                       <li key={idx} className="flex items-center text-gray-600">
-                        <span className="text-blue-500 mr-2">✓</span>
+                        <Check className="w-4 h-4 text-blue-500 mr-2" />
                         {feature}
                       </li>
                     ))}
@@ -331,7 +332,7 @@ export default function Services() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {serviceFeatures.map((feature, index) => (
               <div key={index} className="text-center p-6 rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-blue-50 hover:to-purple-50 transition-all duration-500">
-                <div className="text-5xl mb-6">{feature.icon}</div>
+                <div className="mb-6 flex items-center justify-center">{feature.icon}</div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
               </div>
@@ -372,7 +373,7 @@ export default function Services() {
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-center text-gray-600">
-                      <span className="text-blue-500 mr-3">✓</span>
+                      <Check className="w-4 h-4 text-blue-500 mr-3" />
                       {feature}
                     </li>
                   ))}

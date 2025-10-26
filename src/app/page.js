@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import InquiryPopup from "../components/InquiryPopup";
-
+import { Car, Star, CreditCard, RotateCcw, Phone, Mail, MapPin, Clock, Instagram } from 'lucide-react';
 export default function Home() {
   const [searchForm, setSearchForm] = useState({
     make: "",
@@ -528,25 +528,25 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
-                icon: "🚗",
+                icon: <Car className="w-16 h-16 text-blue-500" />,
                 title: "Premium Fleet",
                 description:
                   "Hand-picked luxury vehicles from the world's most prestigious brands",
               },
               {
-                icon: "⭐",
+                icon: <Star className="w-16 h-16 text-yellow-500" />,
                 title: "Expert Service",
                 description:
                   "Professional team with years of experience in luxury car rentals",
               },
               {
-                icon: "💳",
+                icon: <CreditCard className="w-16 h-16 text-green-500" />,
                 title: "Flexible Payment",
                 description:
                   "No upfront costs, secure your booking with flexible payment options",
               },
               {
-                icon: "🔄",
+                icon: <RotateCcw className="w-16 h-16 text-purple-500" />,
                 title: "Free Amendments",
                 description:
                   "Change your booking details without any additional charges",
@@ -555,7 +555,7 @@ export default function Home() {
               <div
                 key={index}
                 className="group text-center p-8 rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-blue-50 hover:to-purple-50 transition-all duration-500 hover:shadow-xl transform hover:-translate-y-2">
-                <div className="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="mb-6 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
                   {feature.icon}
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">
@@ -646,7 +646,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             <div className="text-center group">
               <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <span className="text-3xl">📞</span>
+                <Phone className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Call Us</h3>
               <p className="text-blue-100 text-lg">+971 50 209 3966</p>
@@ -655,15 +655,15 @@ export default function Home() {
 
             <div className="text-center group">
               <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <span className="text-3xl">📧</span>
+                <Mail className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Email Us</h3>
-              <p className="text-blue-100 text-lg">info@marinarentalcar.com</p>
+              <p className="text-blue-100 text-lg">almarinarentacar@gmail.com</p>
             </div>
 
             <div className="text-center group">
               <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <span className="text-3xl">📱</span>
+                <Instagram className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Follow Us</h3>
               <p className="text-blue-100 text-lg">@marinarentalcar</p>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Phone, Mail } from 'lucide-react';
 
 export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicle" }) {
   const [formData, setFormData] = useState({
@@ -218,12 +219,12 @@ export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicl
         <div className="bg-gray-50 px-6 py-4 rounded-b-3xl">
           <div className="flex items-center justify-between text-sm text-gray-600">
             <div className="flex items-center">
-              <span className="text-blue-600 mr-2">📞</span>
+              <Phone className="w-4 h-4 text-blue-600 mr-2" />
               <span>+971 50 209 3966</span>
             </div>
             <div className="flex items-center">
-              <span className="text-blue-600 mr-2">📧</span>
-              <span>info@marinarentalcar.com</span>
+              <Mail className="w-4 h-4 text-blue-600 mr-2" />
+              <span>almarinarentacar@gmail.com</span>
             </div>
           </div>
         </div>

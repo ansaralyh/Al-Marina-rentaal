@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import { Phone, Mail, MapPin, Clock, Car, DollarSign, MessageCircle, AlertTriangle, Map, Car as CarIcon, Train, Plane } from 'lucide-react';
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -45,25 +46,25 @@ export default function ContactUs() {
 
   const contactInfo = [
     {
-      icon: "📞",
+      icon: <Phone className="w-12 h-12 text-blue-500" />,
       title: "Phone Numbers",
-      details: ["+971 55 566 0466", "+971 56 511 4114"],
+      details: ["+971 50 209 3966", "+971 52 408 9346"],
       description: "Call us for immediate assistance",
     },
     {
-      icon: "📧",
+      icon: <Mail className="w-12 h-12 text-green-500" />,
       title: "Email Address",
-      details: ["info@marinarentalcar.com", "bookings@marinarentalcar.com"],
+      details: ["almarinarentacar@gmail.com"],
       description: "Send us an email anytime",
     },
     {
-      icon: "📍",
+      icon: <MapPin className="w-12 h-12 text-red-500" />,
       title: "Office Location",
-      details: ["Empire Heights Area, Downtown", "Business Bay, Dubai, UAE"],
+      details: ["Empire Heights Area, Downtown Business Bay, Dubai, UAE"],
       description: "Visit our showroom",
     },
     {
-      icon: "🕒",
+      icon: <Clock className="w-12 h-12 text-purple-500" />,
       title: "Business Hours",
       details: ["Saturday - Thursday: 09:00 AM - 06:00 PM", "Friday: Closed"],
       description: "We're here to help",
@@ -85,25 +86,25 @@ export default function ContactUs() {
     {
       title: "Book a Car",
       description: "Reserve your luxury vehicle",
-      icon: "🚗",
+      icon: <Car className="w-8 h-8 text-blue-500" />,
       action: "Book Now",
     },
     {
       title: "Get Quote",
       description: "Request a personalized quote",
-      icon: "💰",
+      icon: <DollarSign className="w-8 h-8 text-green-500" />,
       action: "Get Quote",
     },
     {
       title: "WhatsApp",
       description: "Chat with us instantly",
-      icon: "💬",
+      icon: <MessageCircle className="w-8 h-8 text-green-600" />,
       action: "WhatsApp",
     },
     {
       title: "Emergency",
       description: "24/7 emergency support",
-      icon: "🚨",
+      icon: <AlertTriangle className="w-8 h-8 text-red-500" />,
       action: "Call Now",
     },
   ];
@@ -152,7 +153,7 @@ export default function ContactUs() {
               <div
                 key={index}
                 className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-8 text-center hover:shadow-lg transition-all duration-300">
-                <div className="text-5xl mb-6">{info.icon}</div>
+                <div className="mb-6 flex items-center justify-center">{info.icon}</div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
                   {info.title}
                 </h3>
@@ -295,7 +296,7 @@ export default function ContactUs() {
                       key={index}
                       className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 text-left group">
                       <div className="flex items-center space-x-4">
-                        <div className="text-3xl">{action.icon}</div>
+                        <div className="flex items-center">{action.icon}</div>
                         <div>
                           <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                             {action.title}
@@ -313,7 +314,9 @@ export default function ContactUs() {
               {/* Emergency Contact */}
               <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-3xl p-8 text-white">
                 <div className="text-center">
-                  <div className="text-4xl mb-4">🚨</div>
+                  <div className="mb-4 flex items-center justify-center">
+                    <AlertTriangle className="w-12 h-12 text-white" />
+                  </div>
                   <h3 className="text-xl font-bold mb-2">Emergency Support</h3>
                   <p className="text-red-100 mb-4">
                     24/7 emergency assistance available
@@ -348,7 +351,9 @@ export default function ContactUs() {
             {/* Map Placeholder */}
             <div className="bg-gray-200 rounded-3xl h-96 flex items-center justify-center">
               <div className="text-center">
-                <div className="text-6xl mb-4">🗺️</div>
+                <div className="mb-4 flex items-center justify-center">
+                  <Map className="w-16 h-16 text-gray-500" />
+                </div>
                 <h3 className="text-xl font-bold text-gray-700 mb-2">
                   Interactive Map
                 </h3>
@@ -365,45 +370,49 @@ export default function ContactUs() {
                 </h3>
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
-                    <div className="text-2xl">📍</div>
+                    <div className="flex items-center">
+                      <MapPin className="w-6 h-6 text-blue-500" />
+                    </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Address</h4>
                       <p className="text-gray-600">
-                        Empire Heights Area, Downtown
-                        <br />
-                        Business Bay, Dubai, UAE
+                        Empire Heights Area, Downtown Business Bay, Dubai, UAE
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
-                    <div className="text-2xl">🚗</div>
+                    <div className="flex items-center">
+                      <CarIcon className="w-6 h-6 text-green-500" />
+                    </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Parking</h4>
                       <p className="text-gray-600">
-                        Free parking available
-                        <br />
+                        Free parking available,
                         Valet service on request
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
-                    <div className="text-2xl">🚇</div>
+                    <div className="flex items-center">
+                      <Train className="w-6 h-6 text-purple-500" />
+                    </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">
                         Public Transport
                       </h4>
                       <p className="text-gray-600">
-                        Business Bay Metro Station (5 min walk)
-                        <br />
+                        Business Bay Metro Station (5 min walk),
                         Multiple bus routes available
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-start space-x-4">
-                    <div className="text-2xl">✈️</div>
+                    <div className="flex items-center">
+                      <Plane className="w-6 h-6 text-orange-500" />
+                    </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">
                         From Airport

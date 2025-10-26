@@ -50,6 +50,10 @@ body {
   transition: all 0.3s ease;
 }
 
+button {
+  cursor: pointer;
+}
+
 /* Custom animations */
 @keyframes fadeInUp {
   from {

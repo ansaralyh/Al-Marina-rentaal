@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { User } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -102,19 +103,18 @@ export default function Navbar() {
           
           {/* Desktop Contact & CTA */}
           <div className="hidden lg:flex items-center space-x-4">
-            <div className="hidden xl:block text-sm text-gray-600">
-              <span className="font-medium">Call:</span> +971 50 209 3966
-            </div>
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 xl:px-6 py-2 xl:py-3 rounded-full font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-sm xl:text-base">
-              Book Now
-            </button>
+            <Link
+              href="/admin"
+              className="p-2 text-gray-500 hover:text-gray-700 transition-colors rounded-lg hover:bg-gray-100"
+              title="Admin Portal"
+            >
+              <User className="w-7 h-7" />
+            </Link>
+  
           </div>
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center space-x-2">
-            <div className="hidden sm:block text-xs text-gray-600">
-              <span className="font-medium">Call:</span> +971 50 209 3966
-            </div>
             <button
               onClick={toggleMobileMenu}
               className="p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors"
@@ -200,7 +200,15 @@ export default function Navbar() {
               >
                 Contact Us
               </Link>
-              <div className="pt-4 border-t border-gray-200">
+              <div className="pt-4 border-t border-gray-200 space-y-2">
+                <Link
+                  href="/admin"
+                  className="flex items-center justify-center space-x-2 text-sm text-gray-500 hover:text-gray-700 transition-colors py-2"
+                  onClick={closeMobileMenu}
+                >
+                  <User className="w-4 h-4" />
+                  <span>Admin Portal</span>
+                </Link>
                 <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg">
                   Book Now
                 </button>
