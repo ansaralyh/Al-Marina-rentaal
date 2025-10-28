@@ -1,17 +1,21 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Phone, Mail } from 'lucide-react';
+import { useState } from "react";
+import { Phone, Mail } from "lucide-react";
 
-export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicle" }) {
+export default function InquiryPopup({
+  isOpen,
+  onClose,
+  carName = "Luxury Vehicle",
+}) {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
+    name: "",
+    email: "",
+    phone: "",
     car: carName,
-    pickupDate: '',
-    returnDate: '',
-    message: ''
+    pickupDate: "",
+    returnDate: "",
+    message: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,32 +23,32 @@ export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicl
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     // Reset form
     setFormData({
-      name: '',
-      email: '',
-      phone: '',
+      name: "",
+      email: "",
+      phone: "",
       car: carName,
-      pickupDate: '',
-      returnDate: '',
-      message: ''
+      pickupDate: "",
+      returnDate: "",
+      message: "",
     });
-    
+
     setIsSubmitting(false);
     onClose();
-    
+
     // Show success message (you can customize this)
-    alert('Thank you for your inquiry! We will contact you soon.');
+    alert("Thank you for your inquiry! We will contact you soon.");
   };
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -53,11 +57,10 @@ export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicl
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      ></div>
-      
+        onClick={onClose}></div>
+
       {/* Popup Content */}
       <div className="relative bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
@@ -69,10 +72,18 @@ export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicl
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -96,7 +107,7 @@ export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicl
                 placeholder="Enter your full name"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Email Address *
@@ -128,7 +139,7 @@ export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicl
                 placeholder="Enter your phone number"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Vehicle Interest
@@ -158,7 +169,7 @@ export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicl
                 className="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Return Date
@@ -193,23 +204,21 @@ export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicl
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
               {isSubmitting ? (
                 <div className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   Submitting...
                 </div>
               ) : (
-                'Submit Inquiry'
+                "Submit Inquiry"
               )}
             </button>
-            
+
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 sm:flex-none bg-gray-100 text-gray-700 py-3 px-6 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300"
-            >
+              className="flex-1 sm:flex-none bg-gray-100 text-gray-700 py-3 px-6 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300">
               Cancel
             </button>
           </div>
@@ -220,11 +229,25 @@ export default function InquiryPopup({ isOpen, onClose, carName = "Luxury Vehicl
           <div className="flex items-center justify-between text-sm text-gray-600">
             <div className="flex items-center">
               <Phone className="w-4 h-4 text-blue-600 mr-2" />
-              <span>+971 50 209 3966</span>
+              <span>
+                <a
+                  href="https://wa.me/971502093966"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  +971 50 209 3966
+                </a>
+              </span>
             </div>
             <div className="flex items-center">
               <Mail className="w-4 h-4 text-blue-600 mr-2" />
-              <span>almarinarentacar@gmail.com</span>
+              <span>
+                <a
+                  href="https://gmail.com"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  almarinarentacar@gmail.com
+                </a>
+              </span>
             </div>
           </div>
         </div>

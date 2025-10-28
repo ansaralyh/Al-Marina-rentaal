@@ -25,7 +25,7 @@ export default function Footer() {
                 </span>
               </div>
               <h3 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                Marina Rental Car
+                Noor AL Marina Car Rental
               </h3>
             </div>
             <p className="text-gray-300 leading-relaxed text-sm md:text-base">
@@ -157,7 +157,14 @@ export default function Footer() {
                   <Phone />
                 </span>
                 <div>
-                  <p className="text-gray-300 text-sm">+971 50 209 3966</p>
+                  <p className="text-gray-300 text-sm">
+                    <a
+                      href="https://wa.me/971502093966"
+                      target="_blank"
+                      rel="noopener noreferrer">
+                      +971 50 209 3966
+                    </a>
+                  </p>
                   <p className="text-gray-300 text-sm">+971 52 408 9346</p>
                 </div>
               </div>
@@ -166,7 +173,12 @@ export default function Footer() {
                   <Mail />
                 </span>
                 <p className="text-gray-300 text-sm">
-                  almarinarentacar@gmail.com
+                  <a
+                    href="https://gmail.com"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    almarinarentacar@gmail.com
+                  </a>
                 </p>
               </div>
               <div className="flex items-center space-x-3">
@@ -243,7 +255,8 @@ export default function Footer() {
                   Developed by{" "}
                   <a
                     href="https://sawaine.com/"
-                    className="text-gray-400 hover:text-blue-400 transition-colors duration-300" target="_blank">
+                    className="text-gray-400 hover:text-blue-400 transition-colors duration-300"
+                    target="_blank">
                     Sawaine
                   </a>
                 </p>

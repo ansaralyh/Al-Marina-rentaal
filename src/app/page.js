@@ -4,7 +4,17 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import InquiryPopup from "../components/InquiryPopup";
-import { Car, Star, CreditCard, RotateCcw, Phone, Mail, MapPin, Clock, Instagram } from 'lucide-react';
+import {
+  Car,
+  Star,
+  CreditCard,
+  RotateCcw,
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Instagram,
+} from "lucide-react";
 export default function Home() {
   const [searchForm, setSearchForm] = useState({
     make: "",
@@ -203,7 +213,7 @@ export default function Home() {
                       <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                         {slide.subtitle}
                       </span>
-          </h1>
+                    </h1>
                     <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-blue-100 mb-8 md:mb-12 font-light px-4">
                       {slide.description}
                     </p>
@@ -440,14 +450,18 @@ export default function Home() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
-                    <button 
+                    <button
                       onClick={() => handleInquiryClick(car.name)}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                    >
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
                       Inquire Now
                     </button>
                     <button className="bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300 shadow-lg hover:shadow-xl">
-                      WhatsApp
+                      <a
+                        href="https://wa.me/971502093966"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        Whatsapp
+                      </a>
                     </button>
                   </div>
                 </div>
@@ -649,8 +663,22 @@ export default function Home() {
                 <Phone className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Call Us</h3>
-              <p className="text-blue-100 text-lg">+971 50 209 3966</p>
-              <p className="text-blue-100 text-lg">+971 52 408 9346</p>
+              <p className="text-blue-100 text-lg">
+                <a
+                  href="https://wa.me/971502093966"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  +971 50 209 3966
+                </a>
+              </p>
+              <p className="text-blue-100 text-lg">
+                <a
+                  href="https://wa.me/971524089346"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  +971 52 408 9346
+                </a>
+              </p>
             </div>
 
             <div className="text-center group">
@@ -658,7 +686,9 @@ export default function Home() {
                 <Mail className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Email Us</h3>
-              <p className="text-blue-100 text-lg">almarinarentacar@gmail.com</p>
+              <p className="text-blue-100 text-lg">
+                almarinarentacar@gmail.com
+              </p>
             </div>
 
             <div className="text-center group">
@@ -683,7 +713,7 @@ export default function Home() {
       </section>
 
       {/* Inquiry Popup */}
-      <InquiryPopup 
+      <InquiryPopup
         isOpen={isInquiryOpen}
         onClose={handleCloseInquiry}
         carName={selectedCar}
