@@ -114,7 +114,7 @@ export default function Home() {
       price: "3500",
       currency: "د.إ",
       period: "per day",
-      image: "/cars/1.jpg",
+      image: "https://rentanycar.ae/wp-content/uploads/2024/11/Lamborghini-Urus-Mansory-For-Rent-In-Dubai-750x430-1.webp",
       category: "SUV",
     },
     {
@@ -123,7 +123,7 @@ export default function Home() {
       price: "9500",
       currency: "د.إ",
       period: "per day",
-      image: "/cars/2.jpg",
+      image: "https://rentanycar.ae/wp-content/uploads/2024/12/ejHq490uEX.jpg",
       category: "Supercar",
     },
     {
@@ -132,7 +132,7 @@ export default function Home() {
       price: "3700",
       currency: "د.إ",
       period: "per day",
-      image: "/cars/3.jpg",
+      image: "https://rentanycar.ae/wp-content/uploads/2024/12/Ferrari-F8-Spider-2022.webp",
       category: "Convertible",
     },
     {
@@ -141,7 +141,7 @@ export default function Home() {
       price: "3200",
       currency: "د.إ",
       period: "per day",
-      image: "/cars/4.jpg",
+      image: "https://rentanycar.ae/wp-content/uploads/2024/11/1200x900-1.webp",
       category: "Sports Car",
     },
     {
@@ -150,7 +150,7 @@ export default function Home() {
       price: "2400",
       currency: "د.إ",
       period: "per day",
-      image: "/cars/5.jpg",
+      image: "https://rentanycar.ae/wp-content/uploads/2024/11/Range-Rover-Vogue-Autobiography-Rental-Dubai-2.jpg",
       category: "Luxury SUV",
     },
     {
@@ -159,17 +159,26 @@ export default function Home() {
       price: "550",
       currency: "د.إ",
       period: "per day",
-      image: "/cars/6.jpg",
+      image: "https://rentanycar.ae/wp-content/uploads/2024/11/2020-audi-q3-sportback-40-tfsi-quattro-s-line-suv-white-justin-hilliard-1001x565-1.webp",
       category: "Compact SUV",
     },
     {
       id: 7,
-      name: "BMW M8 Competition",
-      price: "1800",
+      name: "Land Rover Defender",
+      price: "1100",
       currency: "د.إ",
       period: "per day",
-      image: "/cars/7.jpg",
+      image: "https://rentanycar.ae/wp-content/uploads/2024/11/2020-land-rover-defender-110-by-kahn.jpg",
       category: "Luxury Coupe",
+    },
+    {
+      id: 7,
+      name: "Mini Cooper S",
+      price: "349",
+      currency: "د.إ",
+      period: "per day",
+      image: "https://rentanycar.ae/wp-content/uploads/2024/11/Xu0pcH9pgCZfTGDxnyCnXYP4v4-1920.jpg",
+      category: "Mini Car",
     },
   ];
 
@@ -213,7 +222,7 @@ export default function Home() {
                       <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                         {slide.subtitle}
                       </span>
-                    </h1>
+          </h1>
                     <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-blue-100 mb-8 md:mb-12 font-light px-4">
                       {slide.description}
                     </p>
@@ -674,7 +683,7 @@ export default function Home() {
               <p className="text-blue-100 text-lg">
                 <a
                   href="https://wa.me/971524089346"
-                  target="_blank"
+            target="_blank"
                   rel="noopener noreferrer">
                   +971 52 408 9346
                 </a>

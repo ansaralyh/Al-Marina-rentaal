@@ -38,14 +38,24 @@ export default function Footer() {
                 href="#"
                 className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
                 <span className="text-white text-sm">
-                  <Facebook />
+                  <a
+                    href="https://www.facebook.com/share/1APbL5ZHYG/"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    <Facebook />
+                  </a>
                 </span>
               </a>
               <a
                 href="#"
                 className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-pink-500 to-red-500 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
                 <span className="text-white text-sm">
+                  <a
+                    href="https://www.instagram.com/rentacar.aed?igsh=MTlpMTBlcWJ2cXQ2cQ=="
+                    target="_blank"
+                    rel="noopener noreferrer">
                   <Instagram />
+                  </a>
                 </span>
               </a>
               <a
