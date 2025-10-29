@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import Link from "next/link";
 import { Phone, Mail, MapPin, Clock, Car, DollarSign, MessageCircle, AlertTriangle, Map, Car as CarIcon, Train, Plane } from 'lucide-react';
 
 export default function ContactUs() {
@@ -114,8 +115,14 @@ export default function ContactUs() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white relative overflow-hidden">
+      <section className="pt-20 text-white relative overflow-hidden" style={{
+        backgroundImage: "url(/cars/4.jpg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}>
         <div className="absolute inset-0">
+          <div className="absolute inset-0 opacity-70"></div>
+          <div className="absolute inset-0 bg-black/60"></div>
           <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
@@ -180,7 +187,7 @@ export default function ContactUs() {
               <h3 className="text-2xl font-bold text-gray-900 mb-6">
                 Send us a Message
               </h3>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6" id="contact-form">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -512,12 +519,16 @@ export default function ContactUs() {
             quote for your luxury car rental needs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl">
-              Book Now
-            </button>
-            <button className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300">
-              Get Quote
-            </button>
+            <Link href="/fleet" className="inline-block">
+              <span className="inline-block bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl">
+                Book Now
+              </span>
+            </Link>
+            <a href="#contact-form" className="inline-block">
+              <span className="inline-block border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300">
+                Get Quote
+              </span>
+            </a>
           </div>
         </div>
       </section>

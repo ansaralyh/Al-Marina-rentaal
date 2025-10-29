@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import Link from "next/link";
 import {
   Car,
   Trophy,
@@ -1101,8 +1102,14 @@ export default function Fleet() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white relative overflow-hidden">
+      <section className="pt-20 text-white relative overflow-hidden" style={{
+        backgroundImage: "url(/cars/3.jpg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}>
         <div className="absolute inset-0">
+          <div className="absolute inset-0 opacity-70"></div>
+          <div className="absolute inset-0 bg-black/60"></div>
           <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
@@ -1301,9 +1308,11 @@ export default function Fleet() {
 
                     {/* Action Buttons */}
                     <div className="flex gap-2 justify-between">
-                      <button className="bg-yellow-500 text-white py-2 px-6 rounded-md text-sm font-semibold hover:bg-yellow-600 transition-colors">
-                        Inquire Now
-                      </button>
+                      <Link href="/contactus" className="inline-block">
+                        <span className="inline-block bg-yellow-500 text-white py-2 px-6 rounded-md text-sm font-semibold hover:bg-yellow-600 transition-colors">
+                          Inquire Now
+                        </span>
+                      </Link>
                       <button className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition-colors">
                         <a
                           href="https://wa.me/971502093966"

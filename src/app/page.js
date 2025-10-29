@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import InquiryPopup from "../components/InquiryPopup";
@@ -49,7 +50,10 @@ export default function Home() {
       title: "Drive Your Journey,",
       subtitle: "Your Way",
       description: "Fast. Luxurious. Unforgettable",
-      background: "from-slate-900 via-blue-900 to-slate-900",
+      background: "from-black/90 via-black-900 to-black/60",
+      image: "/cars/1.jpg",
+      primaryHref: "/fleet",
+      secondaryHref: "/aboutus",
       buttonText: "Explore Fleet",
       buttonSecondary: "Learn More",
     },
@@ -58,7 +62,10 @@ export default function Home() {
       title: "Luxury Redefined",
       subtitle: "Premium Experience",
       description: "Experience the ultimate in luxury car rentals",
-      background: "from-purple-900 via-indigo-900 to-blue-900",
+      background: "from-black/90 via-black-900 to-black/60",
+      image: "/cars/2.jpg",
+      primaryHref: "/fleet",
+      secondaryHref: "/contactus",
       buttonText: "View Collection",
       buttonSecondary: "Book Now",
     },
@@ -67,7 +74,10 @@ export default function Home() {
       title: "Exotic Dreams",
       subtitle: "Come True",
       description: "Drive the world's most prestigious vehicles",
-      background: "from-emerald-900 via-teal-900 to-cyan-900",
+      background: "from-black/90 via-black-900 to-black/60",
+      image: "/cars/3.jpg",
+      primaryHref: "/fleet",
+      secondaryHref: "/contactus",
       buttonText: "Discover Cars",
       buttonSecondary: "Get Quote",
     },
@@ -76,7 +86,10 @@ export default function Home() {
       title: "Premium Service",
       subtitle: "Unmatched Quality",
       description: "Professional service with luxury vehicles",
-      background: "from-rose-900 via-pink-900 to-purple-900",
+      background: "from-black/90 via-black-900 to-black/60",
+      image: "/cars/4.jpg",
+      primaryHref: "/services",
+      secondaryHref: "/contactus",
       buttonText: "Our Services",
       buttonSecondary: "Contact Us",
     },
@@ -114,7 +127,8 @@ export default function Home() {
       price: "3500",
       currency: "د.إ",
       period: "per day",
-      image: "https://rentanycar.ae/wp-content/uploads/2024/11/Lamborghini-Urus-Mansory-For-Rent-In-Dubai-750x430-1.webp",
+      image:
+        "https://rentanycar.ae/wp-content/uploads/2024/11/Lamborghini-Urus-Mansory-For-Rent-In-Dubai-750x430-1.webp",
       category: "SUV",
     },
     {
@@ -132,7 +146,8 @@ export default function Home() {
       price: "3700",
       currency: "د.إ",
       period: "per day",
-      image: "https://rentanycar.ae/wp-content/uploads/2024/12/Ferrari-F8-Spider-2022.webp",
+      image:
+        "https://rentanycar.ae/wp-content/uploads/2024/12/Ferrari-F8-Spider-2022.webp",
       category: "Convertible",
     },
     {
@@ -150,7 +165,8 @@ export default function Home() {
       price: "2400",
       currency: "د.إ",
       period: "per day",
-      image: "https://rentanycar.ae/wp-content/uploads/2024/11/Range-Rover-Vogue-Autobiography-Rental-Dubai-2.jpg",
+      image:
+        "https://rentanycar.ae/wp-content/uploads/2024/11/Range-Rover-Vogue-Autobiography-Rental-Dubai-2.jpg",
       category: "Luxury SUV",
     },
     {
@@ -159,7 +175,8 @@ export default function Home() {
       price: "550",
       currency: "د.إ",
       period: "per day",
-      image: "https://rentanycar.ae/wp-content/uploads/2024/11/2020-audi-q3-sportback-40-tfsi-quattro-s-line-suv-white-justin-hilliard-1001x565-1.webp",
+      image:
+        "https://rentanycar.ae/wp-content/uploads/2024/11/2020-audi-q3-sportback-40-tfsi-quattro-s-line-suv-white-justin-hilliard-1001x565-1.webp",
       category: "Compact SUV",
     },
     {
@@ -168,7 +185,8 @@ export default function Home() {
       price: "1100",
       currency: "د.إ",
       period: "per day",
-      image: "https://rentanycar.ae/wp-content/uploads/2024/11/2020-land-rover-defender-110-by-kahn.jpg",
+      image:
+        "https://rentanycar.ae/wp-content/uploads/2024/11/2020-land-rover-defender-110-by-kahn.jpg",
       category: "Luxury Coupe",
     },
     {
@@ -177,7 +195,8 @@ export default function Home() {
       price: "349",
       currency: "د.إ",
       period: "per day",
-      image: "https://rentanycar.ae/wp-content/uploads/2024/11/Xu0pcH9pgCZfTGDxnyCnXYP4v4-1920.jpg",
+      image:
+        "https://rentanycar.ae/wp-content/uploads/2024/11/Xu0pcH9pgCZfTGDxnyCnXYP4v4-1920.jpg",
       category: "Mini Car",
     },
   ];
@@ -200,9 +219,18 @@ export default function Home() {
                   ? "opacity-0 -translate-x-full"
                   : "opacity-0 translate-x-full"
               }`}>
-              {/* Background with gradient overlay */}
+              {/* Background image and gradient overlay */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${slide.background}`}></div>
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: `url(${slide.image})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              ></div>
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${slide.background} opacity-70`}
+              ></div>
               <div className="absolute inset-0 bg-black/40"></div>
 
               {/* Animated background elements */}
@@ -222,17 +250,21 @@ export default function Home() {
                       <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                         {slide.subtitle}
                       </span>
-          </h1>
+                    </h1>
                     <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-blue-100 mb-8 md:mb-12 font-light px-4">
                       {slide.description}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-                      <button className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 transform hover:-translate-y-1">
-                        {slide.buttonText}
-                      </button>
-                      <button className="border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-white hover:text-gray-900 transition-all duration-300">
-                        {slide.buttonSecondary}
-                      </button>
+                      <Link href={slide.primaryHref || "/"} className="inline-block">
+                        <span className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-2xl hover:shadow-blue-500/25 transform hover:-translate-y-1">
+                          {slide.buttonText}
+                        </span>
+                      </Link>
+                      <Link href={slide.secondaryHref || "/contactus"} className="inline-block">
+                        <span className="inline-block border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-white hover:text-gray-900 transition-all duration-300">
+                          {slide.buttonSecondary}
+                        </span>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -683,7 +715,7 @@ export default function Home() {
               <p className="text-blue-100 text-lg">
                 <a
                   href="https://wa.me/971524089346"
-            target="_blank"
+                  target="_blank"
                   rel="noopener noreferrer">
                   +971 52 408 9346
                 </a>
@@ -696,7 +728,12 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Email Us</h3>
               <p className="text-blue-100 text-lg">
-                almarinarentacar@gmail.com
+                <a
+                  href="https://gmail.com"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  almarinarentacar@gmail.com
+                </a>
               </p>
             </div>
 
@@ -705,7 +742,12 @@ export default function Home() {
                 <Instagram className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-4">Follow Us</h3>
-              <p className="text-blue-100 text-lg">@marinarentalcar</p>
+              <a
+                href="https://www.instagram.com/rentacar.aed?igsh=MTlpMTBlcWJ2cXQ2cQ=="
+                target="_blank"
+                rel="noopener noreferrer">
+                <p className="text-blue-100 text-lg">@marinarentalcar</p>
+              </a>
             </div>
           </div>
 

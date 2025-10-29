@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
+import Link from "next/link";
 import {
   Trophy,
   Car,
@@ -297,8 +298,14 @@ export default function Services() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white relative overflow-hidden">
+      <section className="pt-20 text-white relative overflow-hidden" style={{
+        backgroundImage: "url(/cars/2.jpg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}>
         <div className="absolute inset-0">
+          <div className="absolute inset-0 opacity-70"></div>
+          <div className="absolute inset-0 bg-black/60"></div>
           <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
@@ -374,7 +381,7 @@ export default function Services() {
               <div
                 key={index}
                 className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2">
-                <div className="mb-6 flex items-center justify-center">
+                <div className="mb-6 flex items-center">
                   {service.image}
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">
@@ -400,9 +407,11 @@ export default function Services() {
                   <div className="text-3xl font-bold text-blue-600 mb-2">
                     {service.price}
                   </div>
-                  <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
-                    Book Now
-                  </button>
+                  <Link href="/contactus" className="block">
+                    <span className="inline-block w-full text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                      Book Now
+                    </span>
+                  </Link>
                 </div>
               </div>
             ))}
@@ -486,14 +495,16 @@ export default function Services() {
                   ))}
                 </ul>
 
-                <button
-                  className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
-                    plan.popular
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}>
-                  Choose Plan
-                </button>
+                <Link href="/contactus" className="block">
+                  <span
+                    className={`inline-block w-full text-center py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
+                      plan.popular
+                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}>
+                    Choose Plan
+                  </span>
+                </Link>
               </div>
             ))}
           </div>
