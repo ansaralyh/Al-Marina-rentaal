@@ -1212,7 +1212,7 @@ export default function Fleet() {
                   <button
                     key={bodyType.id}
                     onClick={() => setSelectedBodyType(bodyType.id)}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                    className={`items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors ${
                       selectedBodyType === bodyType.id
                         ? "bg-blue-100 text-blue-700 border border-blue-300"
                         : "text-gray-700 hover:bg-gray-100"
