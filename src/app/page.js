@@ -250,7 +250,7 @@ export default function Home() {
                       <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                         {slide.subtitle}
                       </span>
-                    </h1>
+          </h1>
                     <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-blue-100 mb-8 md:mb-12 font-light px-4">
                       {slide.description}
                     </p>
@@ -744,7 +744,7 @@ export default function Home() {
               <h3 className="text-2xl font-bold mb-4">Follow Us</h3>
               <a
                 href="https://www.instagram.com/rentacar.aed?igsh=MTlpMTBlcWJ2cXQ2cQ=="
-                target="_blank"
+            target="_blank"
                 rel="noopener noreferrer">
                 <p className="text-blue-100 text-lg">@marinarentalcar</p>
               </a>

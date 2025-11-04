@@ -42,6 +42,7 @@ export default function Fleet() {
     { id: "bentley", name: "Bentley" },
     { id: "cadillac", name: "Cadillac" },
     { id: "chevrolet", name: "Chevrolet" },
+    { id: "mg", name: "MG" },
   ];
 
   const vehicleModels = [
@@ -53,6 +54,7 @@ export default function Fleet() {
     { id: "x7", name: "X7" },
     { id: "s-class", name: "S-Class" },
     { id: "q3", name: "Q3" },
+    { id: "a3", name: "A3" },
     { id: "model-s", name: "Model S" },
     { id: "ghost", name: "Ghost" },
     { id: "cooper-s", name: "Cooper S" },
@@ -73,6 +75,7 @@ export default function Fleet() {
     { id: "tahoe", name: "Tahoe" },
     { id: "corvette-stingray", name: "Corvette Stingray" },
     { id: "812-gts", name: "812 GTS" },
+    { id: "zs", name: "ZS" },
   ];
 
   const fuelTypes = [
@@ -1027,6 +1030,74 @@ export default function Fleet() {
         "Open-top V12 Ferrari delivering breathtaking performance and grand‑touring drama.",
       availability: "Available",
       rating: 5,
+    },
+    {
+      id: 29,
+      name: "Audi A3",
+      make: "audi",
+      model: "a3",
+      category: "luxury",
+      type: "Sedan",
+      bodyType: "sedan",
+      fuelType: "petrol",
+      price: 275,
+      currency: "د.إ",
+      period: "per day",
+      image: "https://rentanycar.ae/wp-content/uploads/2024/11/Audi-A3-Rental-Dubai-10-750x430-1.jpg",
+      specifications: {
+        engine: "2.0L TFSI",
+        power: "190 HP",
+        acceleration: "7.3s 0-100km/h",
+        topSpeed: "250 km/h",
+        seats: "5",
+        transmission: "Automatic",
+      },
+      features: [
+        "Quattro AWD",
+        "Premium Audio",
+        "Leather Seats",
+        "Navigation",
+        "Bluetooth",
+        "Sport Mode",
+      ],
+      description:
+        "A compact luxury sedan that combines sophisticated design with impressive performance.",
+      availability: "Available",
+      rating: 4,
+    },
+    {
+      id: 30,
+      name: "MG ZS",
+      make: "mg",
+      model: "zs",
+      category: "economy",
+      type: "SUV",
+      bodyType: "suv",
+      fuelType: "petrol",
+      price: 160,
+      currency: "د.إ",
+      period: "per day",
+      image: "/cars/mgzs.jpg",
+      specifications: {
+        engine: "1.5L Turbo",
+        power: "160 HP",
+        acceleration: "10.4s 0-100km/h",
+        topSpeed: "180 km/h",
+        seats: "5",
+        transmission: "Automatic",
+      },
+      features: [
+        "Touchscreen Display",
+        "Premium Audio",
+        "Leather Seats",
+        "Navigation",
+        "Bluetooth",
+        "Rear Camera",
+      ],
+      description:
+        "A modern and affordable SUV that offers great value with contemporary features and reliable performance.",
+      availability: "Available",
+      rating: 4,
     },
   ];
 
