@@ -12,7 +12,8 @@ import {
   LogOut,
   Menu,
   X,
-  User
+  User,
+  Car
 } from 'lucide-react';
 
 export default function AdminLayout({ children }) {
@@ -23,11 +24,15 @@ export default function AdminLayout({ children }) {
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'All Blogs', href: '/admin/blogs', icon: List },
     { name: 'Add Blog', href: '/admin/blogs/new', icon: Plus },
+    { name: 'Vehicles', href: '/admin/vehicles', icon: Car },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];
 
   const isActive = (path) => {
-    return pathname === path;
+    if (path === '/admin') {
+      return pathname === path;
+    }
+    return pathname.startsWith(path);
   };
 
   return (

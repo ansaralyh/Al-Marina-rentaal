@@ -20,6 +20,7 @@ export default function NewBlogPost() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [toast, setToast] = useState({ open: false, type: 'success', message: '' });
   const [formData, setFormData] = useState({
     title: '',
     excerpt: '',
@@ -67,18 +68,59 @@ export default function NewBlogPost() {
     }));
   };
 
+  const showToast = (type, message) => {
+    setToast({ open: true, type, message });
+    setTimeout(() => setToast((prev) => ({ ...prev, open: false })), 2500);
+  };
+
+  const handleFileSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showToast('error', 'Please select an image file');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prev) => ({ ...prev, image: reader.result }));
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const payload = {
+      ...formData,
+      tags: formData.tags,
+      isFeatured: formData.featured,
+      featuredImage: formData.image,
+    };
 
-    console.log('Blog post data:', formData);
-    
-    // In a real app, you would save to database here
-    alert('Blog post saved successfully!');
-    router.push('/admin/blogs');
+    try {
+      const res = await fetch(`${apiUrl}/blogs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || 'Failed to create blog');
+      }
+
+      showToast('success', 'Blog post created successfully');
+      setTimeout(() => router.push('/admin/blogs'), 600);
+    } catch (err) {
+      const msg = err.message === 'Failed to fetch'
+        ? 'Cannot connect to backend server. Please make sure the server is running:\n\npnpm run server:dev\n\n(or: npm run server:dev)'
+        : err.message;
+      showToast('error', msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handlePreview = () => {
@@ -87,6 +129,11 @@ export default function NewBlogPost() {
 
   return (
     <AdminLayout>
+      {toast.open && (
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded shadow-lg text-white ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}>
+          {toast.message}
+        </div>
+      )}
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -332,13 +379,29 @@ export default function NewBlogPost() {
                 {/* Image */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Featured Image</h3>
-                  
-                  <div className="text-center">
-                    <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                      <ImageIcon className="w-8 h-8 text-gray-400" />
+                  <div className="space-y-3 text-center">
+                    <div className="w-full h-40 bg-gray-50 rounded-lg border border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                      {formData.image && typeof formData.image === 'string' && formData.image.startsWith('data:image') ? (
+                        <img
+                          src={formData.image}
+                          alt="Preview"
+                          className="h-full w-full object-contain"
+                          onError={(e) => { e.target.src = '/cars/5.jpg'; }}
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center text-gray-500">
+                          <ImageIcon className="w-8 h-8 mb-2" />
+                          <span className="text-sm">Upload an image</span>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-sm text-gray-500 mb-4">Image upload coming soon</p>
-                    <div className="text-4xl">{formData.image}</div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileSelect}
+                      className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer"
+                    />
+                    <p className="text-xs text-gray-500">Supported: JPG, PNG, WebP. Max preview size is browser-limited.</p>
                   </div>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -17,6 +18,8 @@ import {
   Instagram,
 } from "lucide-react";
 export default function Home() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
   const [searchForm, setSearchForm] = useState({
     make: "",
     model: "",
@@ -120,86 +123,44 @@ export default function Home() {
     );
   };
 
-  const luxuryCars = [
-    {
-      id: 1,
-      name: "Lamborghini Urus",
-      price: "3500",
-      currency: "د.إ",
-      period: "per day",
-      image:
-        "https://rentanycar.ae/wp-content/uploads/2024/11/Lamborghini-Urus-Mansory-For-Rent-In-Dubai-750x430-1.webp",
-      category: "SUV",
-    },
-    {
-      id: 2,
-      name: "Ferrari Purosangue",
-      price: "9500",
-      currency: "د.إ",
-      period: "per day",
-      image: "https://rentanycar.ae/wp-content/uploads/2024/12/ejHq490uEX.jpg",
-      category: "Supercar",
-    },
-    {
-      id: 3,
-      name: "Ferrari F8 Spider",
-      price: "3700",
-      currency: "د.إ",
-      period: "per day",
-      image:
-        "https://rentanycar.ae/wp-content/uploads/2024/12/Ferrari-F8-Spider-2022.webp",
-      category: "Convertible",
-    },
-    {
-      id: 4,
-      name: "Porsche 911 Turbo S",
-      price: "3200",
-      currency: "د.إ",
-      period: "per day",
-      image: "https://rentanycar.ae/wp-content/uploads/2024/11/1200x900-1.webp",
-      category: "Sports Car",
-    },
-    {
-      id: 5,
-      name: "Range Rover Vogue",
-      price: "2400",
-      currency: "د.إ",
-      period: "per day",
-      image:
-        "https://rentanycar.ae/wp-content/uploads/2024/11/Range-Rover-Vogue-Autobiography-Rental-Dubai-2.jpg",
-      category: "Luxury SUV",
-    },
-    {
-      id: 6,
-      name: "Audi Q3 Sportsback",
-      price: "550",
-      currency: "د.إ",
-      period: "per day",
-      image:
-        "https://rentanycar.ae/wp-content/uploads/2024/11/2020-audi-q3-sportback-40-tfsi-quattro-s-line-suv-white-justin-hilliard-1001x565-1.webp",
-      category: "Compact SUV",
-    },
-    {
-      id: 7,
-      name: "Land Rover Defender",
-      price: "1100",
-      currency: "د.إ",
-      period: "per day",
-      image:
-        "https://rentanycar.ae/wp-content/uploads/2024/11/2020-land-rover-defender-110-by-kahn.jpg",
-      category: "Luxury Coupe",
-    },
-    {
-      id: 7,
-      name: "Mini Cooper S",
-      price: "349",
-      currency: "د.إ",
-      period: "per day",
-      image:
-        "https://rentanycar.ae/wp-content/uploads/2024/11/Xu0pcH9pgCZfTGDxnyCnXYP4v4-1920.jpg",
-      category: "Mini Car",
-    },
-  ];
+  const fetchVehicles = async () => {
+    const res = await fetch(`${apiUrl}/vehicles`);
+    if (!res.ok) throw new Error("Failed to fetch vehicles");
+    return res.json();
+  };
+
+  const {
+    data: apiVehicles = [],
+    isLoading: vehiclesLoading,
+    isError: vehiclesError,
+  } = useQuery({
+    queryKey: ["home-vehicles"],
+    queryFn: fetchVehicles,
+  });
+
+  const luxuryCars = useMemo(
+    () =>
+      (apiVehicles || [])
+        .map((v) => {
+          const primaryImage =
+            v.images?.find?.((img) => img.isPrimary)?.url ||
+            v.images?.[0]?.url ||
+            v.images?.[0] ||
+            v.image ||
+            "/cars/1.jpg";
+          return {
+            id: v._id || v.id,
+            name: v.name || `${v.make || ""} ${v.model || ""}`.trim(),
+            price: v.pricePerDay ?? v.price ?? 0,
+            currency: v.currency || "د.إ",
+            period: "per day",
+            image: primaryImage,
+            category: v.category || v.bodyType || "Luxury",
+          };
+        })
+        .slice(0, 10),
+    [apiVehicles],
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -456,59 +417,81 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {luxuryCars.map((car) => (
-              <div
-                key={car.id}
-                className="pb-2 group bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2">
-                <div className="relative h-55 overflow-hidden">
-                  <img
-                    src={car.image}
-                    alt={car.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                  <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 rounded-full">
-                    <span className="text-xs font-semibold text-gray-700">
-                      {car.category}
-                    </span>
-                  </div>
-                </div>
+          {vehiclesLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading vehicles...</p>
+            </div>
+          ) : vehiclesError ? (
+            <div className="text-center py-12">
+              <p className="text-red-600 mb-4">Failed to load vehicles. Please try again later.</p>
+            </div>
+          ) : luxuryCars.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No vehicles available at the moment.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {luxuryCars.map((car) => {
+                const detailHref = `/fleet/cardetails?slug=${car.id ?? ""}`;
+                return (
+                  <div
+                    key={car.id}
+                    className="pb-2 group bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2">
+                    <Link href={detailHref}>
+                      <div className="relative h-56 overflow-hidden">
+                        <img
+                          src={car.image}
+                          alt={car.name}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 rounded-full">
+                          <span className="text-xs font-semibold text-gray-700">
+                            {car.category}
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
 
-                <div className="p-4">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    {car.name}
-                  </h3>
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <span className="text-2xl font-bold text-blue-600 bg-clip-text">
-                        {car.price} {car.currency}
-                      </span>
-                      <span className="text-sm text-gray-600 ml-2">
-                        {car.period}
-                      </span>
+                    <div className="p-4">
+                      <Link href={detailHref}>
+                        <h3 className="text-lg font-bold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
+                          {car.name}
+                        </h3>
+                      </Link>
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <span className="text-2xl font-bold text-blue-600 bg-clip-text">
+                            {car.price} {car.currency}
+                          </span>
+                          <span className="text-sm text-gray-600 ml-2">
+                            {car.period}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => handleInquiryClick(car.name)}
+                          className="bg-gradient-to-r bg-yellow-500 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:bg-yellow-600 transition-all duration-300 shadow-lg hover:shadow-xl">
+                          Inquire Now
+                        </button>
+                        <button className="bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300 shadow-lg hover:shadow-xl">
+                          <a
+                            href="https://wa.me/971502093966"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            Whatsapp
+                          </a>
+                        </button>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => handleInquiryClick(car.name)}
-                      className="bg-gradient-to-r bg-yellow-500 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:bg-yellow-600 transition-all duration-300 shadow-lg hover:shadow-xl">
-                      Inquire Now
-                    </button>
-                    <button className="bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 px-3 rounded-lg text-sm font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300 shadow-lg hover:shadow-xl">
-                      <a
-                        href="https://wa.me/971502093966"
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        Whatsapp
-                      </a>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 

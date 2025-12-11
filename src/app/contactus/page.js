@@ -17,6 +17,12 @@ export default function ContactUs() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState({ open: false, type: "success", message: "" });
+
+  const showToast = (type, message) => {
+    setToast({ open: true, type, message });
+    setTimeout(() => setToast((prev) => ({ ...prev, open: false })), 2500);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,20 +35,38 @@ export default function ContactUs() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      const res = await fetch(`${apiUrl}/contacts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    alert("Thank you for your message! We will get back to you soon.");
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-      service: "",
-    });
-    setIsSubmitting(false);
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to send message");
+      }
+
+      showToast("success", "Thank you! We will get back to you soon.");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+        service: "",
+      });
+    } catch (error) {
+      const msg =
+        error.message === "Failed to fetch"
+          ? "Cannot connect to backend server. Please make sure the server is running:\n\npnpm run server:dev\n\n(or: npm run server:dev)"
+          : error.message;
+      showToast("error", msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -113,6 +137,15 @@ export default function ContactUs() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+      {toast.open && (
+        <div
+          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded shadow-lg text-white ${
+            toast.type === "success" ? "bg-green-600" : "bg-red-600"
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="pt-20 text-white relative overflow-hidden" style={{

@@ -19,30 +19,51 @@ export default function InquiryPopup({
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState({ open: false, type: "success", message: "" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const res = await fetch(`${apiUrl}/bookings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      car: carName,
-      pickupDate: "",
-      returnDate: "",
-      message: "",
-    });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to submit inquiry");
+      }
 
-    setIsSubmitting(false);
-    onClose();
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        car: carName,
+        pickupDate: "",
+        returnDate: "",
+        message: "",
+      });
 
-    // Show success message (you can customize this)
-    alert("Thank you for your inquiry! We will contact you soon.");
+      setIsSubmitting(false);
+      showToast("success", "Thank you! We will contact you soon.");
+      setTimeout(onClose, 400);
+    } catch (error) {
+      const msg =
+        error.message === "Failed to fetch"
+          ? "Cannot connect to backend server. Please make sure the server is running:\n\npnpm run server:dev\n\n(or: npm run server:dev)"
+          : error.message;
+      showToast("error", msg);
+      setIsSubmitting(false);
+    }
+  };
+
+  const showToast = (type, message) => {
+    setToast({ open: true, type, message });
+    setTimeout(() => setToast((prev) => ({ ...prev, open: false })), 2500);
   };
 
   const handleChange = (e) => {
@@ -56,6 +77,15 @@ export default function InquiryPopup({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {toast.open && (
+        <div
+          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded shadow-lg text-white ${
+            toast.type === "success" ? "bg-green-600" : "bg-red-600"
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"

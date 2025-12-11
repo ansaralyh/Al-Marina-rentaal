@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Link from "next/link";
@@ -24,6 +25,20 @@ export default function Blog() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  const fetchBlogs = async () => {
+    const res = await fetch(`${apiUrl}/blogs`);
+    if (!res.ok) throw new Error("Failed to fetch blogs");
+    return res.json();
+  };
+
+  const {
+    data: blogs = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({ queryKey: ["public-blogs"], queryFn: fetchBlogs });
 
   const blogCategories = [
     {
@@ -53,143 +68,94 @@ export default function Blog() {
     },
   ];
 
-  const blogPosts = [
-    {
-      id: 1,
-      title: "The Ultimate Guide to Luxury Car Rental in Dubai",
-      excerpt:
-        "Discover everything you need to know about renting luxury cars in Dubai, from the best vehicles to insider tips for an unforgettable experience.",
-      content:
-        "Dubai is synonymous with luxury, and what better way to experience the city's opulence than behind the wheel of a premium vehicle? From the iconic Burj Khalifa to the pristine beaches of Jumeirah, Dubai offers countless opportunities to showcase your style with the perfect luxury car rental...",
-      category: "luxury",
-      author: "Ahmed Al-Rashid",
-      date: "2025-01-15",
-      readTime: "5 min read",
-      image: <Car className="w-16 h-16 text-blue-500" />,
-      featured: true,
-      tags: ["Luxury Cars", "Dubai", "Rental Guide"],
-    },
-    {
-      id: 2,
-      title: "Top 10 Exotic Cars to Rent for Special Occasions",
-      excerpt:
-        "Explore our curated list of the most sought-after exotic cars available for rent, perfect for making any special occasion truly memorable.",
-      content:
-        "When it comes to special occasions, nothing makes a statement quite like an exotic car. Whether it's a wedding, anniversary, or milestone celebration, the right exotic car can transform your event into an unforgettable experience...",
-      category: "luxury",
-      author: "Sarah Johnson",
-      date: "2025-01-12",
-      readTime: "7 min read",
-      image: <Zap className="w-16 h-16 text-red-500" />,
-      featured: false,
-      tags: ["Exotic Cars", "Special Events", "Luxury"],
-    },
-    {
-      id: 3,
-      title: "Driving Tips for First-Time Luxury Car Renters",
-      excerpt:
-        "Essential tips and advice for those new to luxury car rentals, ensuring a safe and enjoyable driving experience.",
-      content:
-        "Renting a luxury car for the first time can be both exciting and intimidating. These high-performance vehicles require a different approach to driving, and understanding the basics can make your experience much more enjoyable...",
-      category: "tips",
-      author: "Mohammed Hassan",
-      date: "2025-01-10",
-      readTime: "4 min read",
-      image: <Lightbulb className="w-16 h-16 text-yellow-500" />,
-      featured: false,
-      tags: ["Driving Tips", "Safety", "Beginners"],
-    },
-    {
-      id: 4,
-      title: "Corporate Events: Choosing the Right Luxury Fleet",
-      excerpt:
-        "How to select the perfect luxury vehicles for corporate events, business meetings, and VIP transportation needs.",
-      content:
-        "Corporate events require a different approach to luxury car rental. From executive transportation to client entertainment, the right fleet can enhance your business image and provide comfort for your most important guests...",
-      category: "events",
-      author: "Emma Wilson",
-      date: "2025-01-08",
-      readTime: "6 min read",
-      image: <Briefcase className="w-16 h-16 text-gray-500" />,
-      featured: false,
-      tags: ["Corporate", "Business", "Events"],
-    },
-    {
-      id: 5,
-      title: "The Future of Electric Luxury Cars in the UAE",
-      excerpt:
-        "Exploring the growing trend of electric luxury vehicles and their impact on the car rental industry in the UAE.",
-      content:
-        "The automotive industry is undergoing a significant transformation, and luxury car manufacturers are leading the charge toward electrification. In the UAE, this shift is particularly evident as the country embraces sustainable transportation...",
-      category: "news",
-      author: "Ahmed Al-Rashid",
-      date: "2025-01-05",
-      readTime: "8 min read",
-      image: <Battery className="w-16 h-16 text-green-500" />,
-      featured: true,
-      tags: ["Electric Cars", "Sustainability", "Future"],
-    },
-    {
-      id: 6,
-      title: "Wedding Car Rental: Making Your Special Day Perfect",
-      excerpt:
-        "Complete guide to choosing the perfect wedding car rental, from classic elegance to modern luxury options.",
-      content:
-        "Your wedding day is one of the most important days of your life, and every detail matters. The car you choose for your special day should reflect your style and create lasting memories. From classic Rolls-Royce to modern supercars...",
-      category: "events",
-      author: "Sarah Johnson",
-      date: "2025-01-03",
-      readTime: "5 min read",
-      image: <PartyPopper className="w-16 h-16 text-pink-500" />,
-      featured: false,
-      tags: ["Wedding", "Special Events", "Luxury"],
-    },
-    {
-      id: 7,
-      title: "Maintenance and Care: Keeping Luxury Cars in Perfect Condition",
-      excerpt:
-        "Insider tips on how we maintain our luxury fleet to ensure every vehicle meets the highest standards of performance and comfort.",
-      content:
-        "Maintaining a luxury car fleet requires meticulous attention to detail and a deep understanding of high-performance vehicles. At Marina Rental Car, we follow strict maintenance protocols to ensure every vehicle in our fleet...",
-      category: "tips",
-      author: "Mohammed Hassan",
-      date: "2025-01-01",
-      readTime: "6 min read",
-      image: <Wrench className="w-16 h-16 text-gray-600" />,
-      featured: false,
-      tags: ["Maintenance", "Care", "Quality"],
-    },
-    {
-      id: 8,
-      title: "Dubai's Most Instagram-Worthy Car Rental Locations",
-      excerpt:
-        "Discover the best locations in Dubai for stunning car photography and social media content with your luxury rental.",
-      content:
-        "Dubai offers countless breathtaking backdrops for luxury car photography. From the iconic Burj Khalifa to the pristine desert dunes, the city provides the perfect setting for capturing your luxury car rental experience...",
-      category: "tips",
-      author: "Emma Wilson",
-      date: "2024-12-28",
-      readTime: "4 min read",
-      image: <Camera className="w-16 h-16 text-purple-500" />,
-      featured: false,
-      tags: ["Photography", "Dubai", "Social Media"],
-    },
-  ];
+  const normalizedBlogs = useMemo(() => {
+    return (blogs || []).map((b, idx) => ({
+      ...b,
+      id: b._id || b.id || idx,
+      title: b.title || "Untitled",
+      excerpt: b.excerpt || "",
+      content: b.content || "",
+      category: (b.category || "luxury").toLowerCase(),
+      author: b.author || "Admin",
+      date: b.createdAt || b.updatedAt || new Date().toISOString(),
+      readTime: b.readTime || "5 min read",
+      featured: Boolean(b.isFeatured),
+      image: b.featuredImage || null,
+      tags: b.tags || [],
+      slug: b.slug || b._id || b.id,
+      views: b.views ?? 0,
+    }));
+  }, [blogs]);
 
-  const filteredPosts = blogPosts.filter((post) => {
-    const categoryMatch =
-      selectedCategory === "all" || post.category === selectedCategory;
-    const searchMatch =
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.tags.some((tag) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    return categoryMatch && searchMatch;
-  });
+  const filteredPosts = useMemo(() => {
+    return normalizedBlogs.filter((post) => {
+      const categoryMatch =
+        selectedCategory === "all" || post.category === selectedCategory;
+      const lowerSearch = searchTerm.toLowerCase();
+      const searchMatch =
+        post.title.toLowerCase().includes(lowerSearch) ||
+        post.excerpt.toLowerCase().includes(lowerSearch) ||
+        (post.tags || []).some((tag) =>
+          tag.toLowerCase().includes(lowerSearch)
+        );
+      return categoryMatch && searchMatch;
+    });
+  }, [normalizedBlogs, selectedCategory, searchTerm]);
 
-  const featuredPosts = blogPosts.filter((post) => post.featured);
+  const featuredPosts = filteredPosts.filter((post) => post.featured).slice(0, 4);
   const regularPosts = filteredPosts.filter((post) => !post.featured);
+
+  const blogStats = useMemo(() => {
+    const categoriesSet = new Set(
+      normalizedBlogs.map((b) => b.category || "uncategorized")
+    );
+    const totalViews = normalizedBlogs.reduce(
+      (sum, b) => sum + (Number(b.views) || 0),
+      0
+    );
+    return {
+      totalPosts: normalizedBlogs.length,
+      categoriesCount: categoriesSet.size,
+      totalViews,
+    };
+  }, [normalizedBlogs]);
+
+  const renderImage = (post) => {
+    if (post.image) {
+      return (
+        <img
+          src={post.image}
+          alt={post.title}
+          className="h-full w-full object-cover"
+          onError={(e) => {
+            e.target.src = "/cars/5.jpg";
+          }}
+        />
+      );
+    }
+    return (
+      <div className="flex items-center justify-center h-full w-full bg-gray-100">
+        <FileText className="w-10 h-10 text-gray-400" />
+      </div>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 space-y-3">
+        <p className="text-lg font-semibold text-gray-800">Failed to load blogs</p>
+        <p className="text-sm text-gray-600">{error?.message}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -264,7 +230,7 @@ export default function Blog() {
       </section>
 
       {/* Featured Posts */}
-      {selectedCategory === "all" && (
+            {selectedCategory === "all" && featuredPosts.length > 0 && (
         <section className="py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
@@ -281,8 +247,8 @@ export default function Blog() {
                 <article
                   key={post.id}
                   className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
-                  <div className="h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative">
-                    <div className="opacity-60">{post.image}</div>
+                  <div className="h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
+                    {renderImage(post)}
                     <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full">
                       <span className="text-sm font-semibold">Featured</span>
                     </div>
@@ -323,7 +289,7 @@ export default function Blog() {
                         </div>
                       </div>
                       <button
-                        onClick={() => router.push(`/blogs/${post.id}`)}
+                        onClick={() => router.push(`/blogs/${post.slug}`)}
                         className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300">
                         Read More
                       </button>
@@ -356,8 +322,8 @@ export default function Blog() {
               <article
                 key={post.id}
                 className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-                <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <div className="opacity-70">{post.image}</div>
+                <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden">
+                  {renderImage(post)}
                 </div>
 
                 <div className="p-6">
@@ -397,7 +363,7 @@ export default function Blog() {
                       </div>
                     </div>
                     <button
-                      onClick={() => router.push(`/blogs/${post.id}`)}
+                      onClick={() => router.push(`/blogs/${post.slug}`)}
                       className="text-blue-600 hover:text-blue-700 font-medium text-sm">
                       Read More →
                     </button>
@@ -446,7 +412,7 @@ export default function Blog() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center group">
               <div className="text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
-                {blogPosts.length}+
+                {blogStats.totalPosts}+
               </div>
               <div className="text-lg font-semibold text-blue-100">
                 Blog Posts
@@ -454,7 +420,7 @@ export default function Blog() {
             </div>
             <div className="text-center group">
               <div className="text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
-                5
+                {blogStats.categoriesCount}
               </div>
               <div className="text-lg font-semibold text-blue-100">
                 Categories
@@ -462,10 +428,10 @@ export default function Blog() {
             </div>
             <div className="text-center group">
               <div className="text-6xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 group-hover:scale-110 transition-transform duration-300">
-                10K+
+                {blogStats.totalViews.toLocaleString()}
               </div>
               <div className="text-lg font-semibold text-blue-100">
-                Monthly Readers
+                Total Views
               </div>
             </div>
             <div className="text-center group">

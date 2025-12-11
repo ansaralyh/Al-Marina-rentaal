@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import AdminLayout from "../../../components/AdminLayout";
 import {
   Plus,
@@ -16,100 +17,60 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
+const fetchBlogs = async () => {
+  const response = await fetch(`${apiUrl}/blogs`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch blogs");
+  }
+  return response.json();
+};
+
+const deleteBlog = async (id) => {
+  const response = await fetch(`${apiUrl}/blogs/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    throw new Error("Failed to delete blog");
+  }
+  return true;
+};
+
 export default function BlogManagement() {
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date");
 
-  // Mock data - in a real app, this would come from an API
-  useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setBlogs([
-        {
-          id: 1,
-          title: "The Ultimate Guide to Luxury Car Rental in Dubai",
-          excerpt:
-            "Discover everything you need to know about renting luxury cars in Dubai...",
-          category: "luxury",
-          status: "published",
-          author: "Ahmed Al-Rashid",
-          createdAt: "2025-01-15",
-          updatedAt: "2025-01-15",
-          views: 245,
-          featured: true,
-        },
-        {
-          id: 2,
-          title: "Top 10 Exotic Cars to Rent for Special Occasions",
-          excerpt:
-            "Explore our curated list of the most sought-after exotic cars...",
-          category: "luxury",
-          status: "published",
-          author: "Sarah Johnson",
-          createdAt: "2025-01-12",
-          updatedAt: "2025-01-12",
-          views: 189,
-          featured: false,
-        },
-        {
-          id: 3,
-          title: "Driving Tips for First-Time Luxury Car Renters",
-          excerpt:
-            "Essential tips and advice for those new to luxury car rentals...",
-          category: "tips",
-          status: "draft",
-          author: "Mohammed Hassan",
-          createdAt: "2025-01-10",
-          updatedAt: "2025-01-10",
-          views: 0,
-          featured: false,
-        },
-        {
-          id: 4,
-          title: "Corporate Events: Choosing the Right Luxury Fleet",
-          excerpt:
-            "How to select the perfect luxury vehicles for corporate events...",
-          category: "events",
-          status: "published",
-          author: "Emma Wilson",
-          createdAt: "2025-01-08",
-          updatedAt: "2025-01-08",
-          views: 156,
-          featured: false,
-        },
-        {
-          id: 5,
-          title: "The Future of Electric Luxury Cars in the UAE",
-          excerpt: "Exploring the growing trend of electric luxury vehicles...",
-          category: "news",
-          status: "published",
-          author: "Ahmed Al-Rashid",
-          createdAt: "2025-01-05",
-          updatedAt: "2025-01-05",
-          views: 203,
-          featured: true,
-        },
-        {
-          id: 6,
-          title: "Wedding Car Rental: Making Your Special Day Perfect",
-          excerpt:
-            "Complete guide to choosing the perfect wedding car rental...",
-          category: "events",
-          status: "draft",
-          author: "Sarah Johnson",
-          createdAt: "2025-01-03",
-          updatedAt: "2025-01-03",
-          views: 0,
-          featured: false,
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
-  }, []);
+  const queryClient = useQueryClient();
+  const {
+    data: blogs = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: fetchBlogs,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteBlog,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+    onError: (err) => {
+      alert(`Error deleting blog: ${err.message}`);
+    },
+  });
+
+  const normalizedBlogs = (blogs || []).map((blog) => ({
+    ...blog,
+    id: blog._id || blog.id,
+    status: blog.status || "published",
+    category: blog.category || "luxury",
+    views: blog.views ?? 0,
+    author: blog.author || "Admin",
+    createdAt: blog.createdAt || blog.updatedAt || new Date().toISOString(),
+  }));
 
   const categories = [
     { value: "all", label: "All Categories" },
@@ -154,7 +115,7 @@ export default function BlogManagement() {
     }
   };
 
-  const filteredBlogs = blogs.filter((blog) => {
+  const filteredBlogs = normalizedBlogs.filter((blog) => {
     const matchesSearch =
       blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -184,15 +145,26 @@ export default function BlogManagement() {
 
   const handleDelete = (blogId) => {
     if (confirm("Are you sure you want to delete this blog post?")) {
-      setBlogs((prev) => prev.filter((blog) => blog.id !== blogId));
+      deleteMutation.mutate(blogId);
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (isError) {
+    return (
+      <AdminLayout>
+        <div className="flex flex-col items-center justify-center h-64 space-y-4">
+          <p className="text-gray-700 font-semibold">Failed to load blogs</p>
+          <p className="text-sm text-gray-500">{error?.message}</p>
         </div>
       </AdminLayout>
     );

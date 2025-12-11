@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Link from "next/link";
@@ -15,6 +16,16 @@ import {
   ChevronDown,
   MessageCircle,
 } from "lucide-react";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
+const fetchVehicles = async () => {
+  const response = await fetch(`${apiUrl}/vehicles`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch vehicles");
+  }
+  return response.json();
+};
 
 export default function Fleet() {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -95,7 +106,7 @@ export default function Fleet() {
     { id: "suv", name: "SUV", icon: "🚙" },
   ];
 
-  const fleetVehicles = [
+  const staticFleetVehicles = [
     {
       id: 1,
       name: "Lamborghini Urus Mansory",
@@ -1101,6 +1112,45 @@ export default function Fleet() {
     },
   ];
 
+  const {
+    data: apiVehicles = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["fleet-vehicles"],
+    queryFn: fetchVehicles,
+  });
+
+  const mappedApiVehicles = (apiVehicles || []).map((vehicle) => {
+    const primaryImage =
+      vehicle.images?.find?.((img) => img.isPrimary)?.url ||
+      vehicle.images?.[0]?.url ||
+      vehicle.images?.[0] ||
+      vehicle.image;
+
+    return {
+      ...vehicle,
+      id: vehicle._id || vehicle.id,
+      make: vehicle.make?.toLowerCase?.() || vehicle.make || "unknown",
+      model: vehicle.model?.toLowerCase?.() || vehicle.model || "",
+      category: vehicle.category?.toLowerCase?.() || "luxury",
+      type: vehicle.type || vehicle.bodyType || "SUV",
+      bodyType: vehicle.bodyType || vehicle.type || "SUV",
+      fuelType: vehicle.fuelType || "petrol",
+      price: vehicle.pricePerDay ?? vehicle.price ?? 0,
+      currency: vehicle.currency || "د.إ",
+      period: "per day",
+      image: primaryImage || "/cars/1.jpg",
+      availability: vehicle.availability || "Available",
+      rating: vehicle.rating || 5,
+      specifications: vehicle.specifications || {},
+      features: vehicle.features || [],
+    };
+  });
+
+  const fleetVehicles = mappedApiVehicles;
+
   const filteredVehicles = fleetVehicles.filter((vehicle) => {
     const categoryMatch =
       selectedCategory === "all" || vehicle.category === selectedCategory;
@@ -1167,6 +1217,23 @@ export default function Fleet() {
     searchQuery,
     sortBy,
   ]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 space-y-4">
+        <p className="text-lg font-semibold text-gray-800">Failed to load vehicles</p>
+        <p className="text-sm text-gray-500">{error?.message}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1341,62 +1408,69 @@ export default function Fleet() {
 
             {/* Fleet Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayedVehicles.map((vehicle) => (
-                <div
-                  key={vehicle.id}
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-                  {/* Vehicle Image */}
-                  <div className="h-48 bg-gray-100 flex items-center justify-center">
-                    <img
-                      src={vehicle.image}
-                      alt={vehicle.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.nextSibling.style.display = "flex";
-                      }}
-                    />
-                    <div className="hidden w-full h-full items-center justify-center">
-                      <CarIcon className="w-16 h-16 text-gray-400" />
-                    </div>
-                  </div>
-
-                  {/* Vehicle Info */}
-                  <div className="p-4">
-                    <h3 className="text-md font-bold text-gray-900 mb-2">
-                      {vehicle.name}
-                    </h3>
-
-                    {/* Price */}
-                    <div className="mb-4">
-                      <div className="text-xl font-bold text-blue-600">
-                        {vehicle.price} {vehicle.currency}
+              {displayedVehicles.map((vehicle) => {
+                const detailHref = `/fleet/cardetails?slug=${vehicle.id ?? ""}`;
+                return (
+                  <div
+                    key={vehicle.id}
+                    className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+                    {/* Vehicle Image */}
+                    <Link href={detailHref}>
+                      <div className="h-48 bg-gray-100 flex items-center justify-center">
+                        <img
+                          src={vehicle.image}
+                          alt={vehicle.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                            e.target.nextSibling.style.display = "flex";
+                          }}
+                        />
+                        <div className="hidden w-full h-full items-center justify-center">
+                          <CarIcon className="w-16 h-16 text-gray-400" />
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-600">
-                        {vehicle.period}
-                      </div>
-                    </div>
+                    </Link>
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-2 justify-between">
-                      <Link href="/contactus" className="inline-block">
-                        <span className="inline-block bg-yellow-500 text-white py-2 px-6 rounded-md text-sm font-semibold hover:bg-yellow-600 transition-colors">
-                          Inquire Now
-                        </span>
+                    {/* Vehicle Info */}
+                    <div className="p-4">
+                      <Link href={detailHref}>
+                        <h3 className="text-md font-bold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
+                          {vehicle.name}
+                        </h3>
                       </Link>
-                      <button className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition-colors">
-                        <a
-                          href="https://wa.me/971502093966"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center">
-                          <MessageCircle className="w-4 h-4" />
-                        </a>
-                      </button>
+
+                      {/* Price */}
+                      <div className="mb-4">
+                        <div className="text-xl font-bold text-blue-600">
+                          {vehicle.price} {vehicle.currency}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {vehicle.period}
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 justify-between">
+                        <Link href="/contactus" className="inline-block">
+                          <span className="inline-block bg-yellow-500 text-white py-2 px-6 rounded-md text-sm font-semibold hover:bg-yellow-600 transition-colors">
+                            Inquire Now
+                          </span>
+                        </Link>
+                        <button className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition-colors">
+                          <a
+                            href="https://wa.me/971502093966"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center">
+                            <MessageCircle className="w-4 h-4" />
+                          </a>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Load More Button */}
