@@ -13,7 +13,9 @@ import {
   Menu,
   X,
   User,
-  Car
+  Car,
+  Calendar,
+  Mail
 } from 'lucide-react';
 
 export default function AdminLayout({ children }) {
@@ -25,6 +27,8 @@ export default function AdminLayout({ children }) {
     { name: 'All Blogs', href: '/admin/blogs', icon: List },
     { name: 'Add Blog', href: '/admin/blogs/new', icon: Plus },
     { name: 'Vehicles', href: '/admin/vehicles', icon: Car },
+    { name: 'Bookings', href: '/admin/bookings', icon: Calendar },
+    { name: 'Contacts', href: '/admin/contacts', icon: Mail },
     { name: 'Settings', href: '/admin/settings', icon: Settings },
   ];
 
