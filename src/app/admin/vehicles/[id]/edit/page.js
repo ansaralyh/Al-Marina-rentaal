@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 import Link from 'next/link';
 import { authenticatedFetch } from '@/lib/auth';
@@ -9,7 +9,7 @@ import { uploadVehicleImages } from '@/lib/upload';
 import { z } from 'zod';
 import { ArrowLeft, Save, X, Loader2 } from 'lucide-react';
 
-// Zod validation schema for vehicle
+// Zod validation schema for vehicle (same as new form)
 const vehicleSchema = z.object({
   name: z.string().min(1, 'Vehicle name is required').max(200, 'Vehicle name must be less than 200 characters'),
   make: z.string().min(1, 'Make is required').max(100, 'Make must be less than 100 characters'),
@@ -44,13 +44,16 @@ const vehicleSchema = z.object({
   features: z.array(z.string()).optional(),
 });
 
-export default function NewVehiclePage() {
+export default function EditVehiclePage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const params = useParams();
+  const vehicleId = params.id;
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [toast, setToast] = useState({ open: false, type: "success", message: "" });
   const [errors, setErrors] = useState({});
-  const [pendingFiles, setPendingFiles] = useState([]); // Files waiting to be uploaded
+  const [pendingFiles, setPendingFiles] = useState([]); // Files waiting to be uploaded or already uploaded URLs
   const [formData, setFormData] = useState({
     name: '',
     make: '',
@@ -67,14 +70,12 @@ export default function NewVehiclePage() {
     newImage: '',
     description: '',
     availability: 'Available',
-    // Specifications
     engine: '',
     power: '',
     acceleration: '',
     topSpeed: '',
     seats: '',
     transmission: 'Automatic',
-    // Features (array)
     features: [],
     newFeature: '',
   });
@@ -91,6 +92,74 @@ export default function NewVehiclePage() {
   ];
   const fuelTypes = ['Petrol', 'Electric', 'Hybrid'];
   const availabilityOptions = ['Available', 'Reserved', 'Unavailable'];
+
+  // Fetch vehicle data on mount
+  useEffect(() => {
+    const fetchVehicle = async () => {
+      try {
+        setLoading(true);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+        const response = await authenticatedFetch(`${apiUrl}/vehicles/${vehicleId}`);
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Vehicle not found');
+          }
+          throw new Error('Failed to fetch vehicle');
+        }
+
+        const vehicle = await response.json();
+
+        // Populate form with vehicle data
+        const existingImages = vehicle.images?.map(img => img.url || img) || [];
+        setFormData({
+          name: vehicle.name || '',
+          make: vehicle.make || '',
+          model: vehicle.model || '',
+          year: vehicle.year?.toString() || '',
+          category: vehicle.category || 'Luxury',
+          type: vehicle.type || 'Sedan',
+          bodyType: vehicle.bodyType || 'sedan',
+          fuelType: vehicle.fuelType || 'Petrol',
+          price: vehicle.pricePerDay?.toString() || '',
+          currency: vehicle.currency || 'د.إ',
+          period: vehicle.period || 'per day',
+          images: existingImages, // Keep for backward compatibility
+          newImage: '',
+          description: vehicle.description || '',
+          availability: vehicle.availability || 'Available',
+          engine: vehicle.engine || '',
+          power: vehicle.power || vehicle.horsepower || '',
+          acceleration: vehicle.acceleration || '',
+          topSpeed: vehicle.topSpeed || '',
+          seats: vehicle.seats?.toString() || '',
+          transmission: vehicle.transmission || 'Automatic',
+          features: vehicle.features || [],
+          newFeature: '',
+        });
+        
+        // Populate pendingFiles with existing images (as URLs, already uploaded)
+        setPendingFiles(existingImages.map((url, idx) => ({
+          file: null,
+          preview: url,
+          url: url,
+          uploaded: true,
+        })));
+      } catch (error) {
+        console.error('Error fetching vehicle:', error);
+        showToast('error', error.message || 'Failed to load vehicle');
+        setTimeout(() => {
+          router.push('/admin/vehicles');
+        }, 2000);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (vehicleId) {
+      fetchVehicle();
+    }
+  }, [vehicleId, router]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -171,7 +240,7 @@ export default function NewVehiclePage() {
 
   // Upload pending files
   const uploadPendingFiles = async () => {
-    const filesToUpload = pendingFiles.filter(pf => !pf.uploaded && !pf.isUploading);
+    const filesToUpload = pendingFiles.filter(pf => pf.file && !pf.uploaded && !pf.isUploading);
     if (filesToUpload.length === 0) return [];
 
     setUploadingImages(true);
@@ -181,8 +250,11 @@ export default function NewVehiclePage() {
       
       // Mark files as uploaded
       setPendingFiles(prev => prev.map(pf => {
-        const uploaded = result.files.find(f => f.originalName === pf.file.name);
-        return uploaded ? { ...pf, uploaded: true, url: uploaded.url } : pf;
+        if (pf.file && !pf.uploaded) {
+          const uploaded = result.files.find(f => f.originalName === pf.file.name);
+          return uploaded ? { ...pf, uploaded: true, url: uploaded.url } : pf;
+        }
+        return pf;
       }));
 
       return result.urls;
@@ -198,7 +270,7 @@ export default function NewVehiclePage() {
   const handleRemoveImage = (index) => {
     // Remove from pending files
     const fileToRemove = pendingFiles[index];
-    if (fileToRemove?.preview) {
+    if (fileToRemove?.preview && fileToRemove?.file) {
       URL.revokeObjectURL(fileToRemove.preview);
     }
     setPendingFiles(prev => prev.filter((_, i) => i !== index));
@@ -223,32 +295,10 @@ export default function NewVehiclePage() {
     setErrors({});
 
     try {
-      // Upload pending images first
-      if (pendingFiles.length === 0) {
-        showToast('error', 'Please add at least one image');
-        return;
-      }
+      // Validate with Zod
+      const validatedData = vehicleSchema.parse(formData);
 
-      const uploadedUrls = await uploadPendingFiles();
-      
-      if (uploadedUrls.length === 0) {
-        // Use already uploaded URLs from pendingFiles
-        const uploadedFiles = pendingFiles.filter(pf => pf.uploaded && pf.url);
-        if (uploadedFiles.length === 0) {
-          showToast('error', 'Please upload at least one image');
-          return;
-        }
-        uploadedUrls.push(...uploadedFiles.map(pf => pf.url));
-      }
-
-      // Validate form data (excluding images - we'll add them manually)
-      const formDataWithoutImages = { ...formData, images: [] };
-      const validatedData = vehicleSchema.parse({
-        ...formDataWithoutImages,
-        images: uploadedUrls, // Use uploaded URLs
-      });
-
-      setLoading(true);
+      setSaving(true);
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
       const vehicleData = {
@@ -256,23 +306,23 @@ export default function NewVehiclePage() {
         pricePerDay: Number(validatedData.price),
         year: Number(validatedData.year),
         seats: validatedData.seats ? Number(validatedData.seats) : undefined,
-        images: validatedData.images.map((url, idx) => ({
-          url: url,
+        images: validatedData.images.map((img, idx) => ({
+          url: img,
           isPrimary: idx === 0,
         })),
       };
 
-      const response = await authenticatedFetch(`${apiUrl}/vehicles`, {
-        method: 'POST',
+      const response = await authenticatedFetch(`${apiUrl}/vehicles/${vehicleId}`, {
+        method: 'PUT',
         body: JSON.stringify(vehicleData),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(errorText || 'Failed to create vehicle');
+        throw new Error(errorText || 'Failed to update vehicle');
       }
 
-      showToast('success', 'Vehicle created successfully');
+      showToast('success', 'Vehicle updated successfully');
       setTimeout(() => {
         router.push('/admin/vehicles');
       }, 600);
@@ -288,16 +338,26 @@ export default function NewVehiclePage() {
         setErrors(fieldErrors);
         showToast('error', 'Please fix the validation errors');
       } else {
-        console.error('Error creating vehicle:', error);
+        console.error('Error updating vehicle:', error);
         const errorMessage = error.message === 'Failed to fetch' 
-          ? 'Cannot connect to backend server. Please make sure the server is running:\n\npnpm run server:dev\n\n(or: npm run server:dev)'
+          ? 'Cannot connect to backend server. Please make sure the server is running.'
           : error.message;
         showToast('error', errorMessage);
       }
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -317,8 +377,8 @@ export default function NewVehiclePage() {
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </Link>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Add New Vehicle</h1>
-              <p className="text-gray-600 mt-2">Fill in the details to add a new vehicle to your fleet</p>
+              <h1 className="text-3xl font-bold text-gray-900">Edit Vehicle</h1>
+              <p className="text-gray-600 mt-2">Update vehicle details</p>
             </div>
           </div>
         </div>
@@ -341,14 +401,9 @@ export default function NewVehiclePage() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        errors.name ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="e.g., Lamborghini Urus Mansory"
                     />
-                    {errors.name && (
-                      <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -360,14 +415,9 @@ export default function NewVehiclePage() {
                       value={formData.make}
                       onChange={handleChange}
                       required
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        errors.make ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="e.g., Lamborghini"
                     />
-                    {errors.make && (
-                      <p className="mt-1 text-sm text-red-600">{errors.make}</p>
-                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -379,36 +429,26 @@ export default function NewVehiclePage() {
                       value={formData.model}
                       onChange={handleChange}
                       required
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        errors.model ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="e.g., Urus"
                     />
-                    {errors.model && (
-                      <p className="mt-1 text-sm text-red-600">{errors.model}</p>
-                    )}
                   </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Year *
-                  </label>
-                  <input
-                    type="number"
-                    name="year"
-                    value={formData.year}
-                    onChange={handleChange}
-                    required
-                    min="1900"
-                    max="2100"
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                      errors.year ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="e.g., 2024"
-                  />
-                  {errors.year && (
-                    <p className="mt-1 text-sm text-red-600">{errors.year}</p>
-                  )}
-                </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Year *
+                    </label>
+                    <input
+                      type="number"
+                      name="year"
+                      value={formData.year}
+                      onChange={handleChange}
+                      required
+                      min="1900"
+                      max="2100"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="e.g., 2024"
+                    />
+                  </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Category *
@@ -508,14 +548,9 @@ export default function NewVehiclePage() {
                       required
                       min="0"
                       step="0.01"
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                        errors.price ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="3500"
                     />
-                    {errors.price && (
-                      <p className="mt-1 text-sm text-red-600">{errors.price}</p>
-                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -585,13 +620,12 @@ export default function NewVehiclePage() {
                             <span className="font-semibold text-blue-600">Click to upload</span> or drag and drop
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            PNG, JPG, GIF up to 10MB (Select multiple images)
+                            PNG, JPG, GIF, WEBP up to 5MB (Select multiple images)
                           </p>
                         </div>
                       </label>
                     </div>
                     
-                    {/* Alternative: URL input for external images */}
                     <div className="border-t pt-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Or Add Image URL (Optional)
@@ -644,12 +678,12 @@ export default function NewVehiclePage() {
                               Primary
                             </div>
                           )}
-                          {uploadingImages && !fileData.uploaded && (
+                          {uploadingImages && !fileData.uploaded && fileData.file && (
                             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
                               <Loader2 className="w-6 h-6 text-white animate-spin" />
                             </div>
                           )}
-                          {fileData.uploaded && (
+                          {fileData.uploaded && fileData.file && (
                             <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
                               Uploaded
                             </div>
@@ -830,11 +864,11 @@ export default function NewVehiclePage() {
                 <div className="space-y-3">
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={saving}
                     className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Save className="w-4 h-4 mr-2" />
-                    {loading ? 'Saving...' : 'Save Vehicle'}
+                    {saving ? 'Saving...' : 'Update Vehicle'}
                   </button>
                   <Link
                     href="/admin/vehicles"

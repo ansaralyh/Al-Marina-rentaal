@@ -1,8 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import AdminLayout from "../../../components/AdminLayout";
+import { authenticatedFetch } from "@/lib/auth";
+import { exportToCSV, exportToExcel } from '@/lib/export';
+import toast from "react-hot-toast";
+import ConfirmModal from '@/components/ConfirmModal';
+import { StatsSkeleton, TableSkeleton } from '@/components/Skeletons';
 import {
   Plus,
   Search,
@@ -14,13 +20,15 @@ import {
   Calendar,
   User,
   TrendingUp,
+  Download,
+  FileSpreadsheet
 } from "lucide-react";
 import Link from "next/link";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 const fetchBlogs = async () => {
-  const response = await fetch(`${apiUrl}/blogs`);
+  const response = await authenticatedFetch(`${apiUrl}/blogs`);
   if (!response.ok) {
     throw new Error("Failed to fetch blogs");
   }
@@ -28,7 +36,7 @@ const fetchBlogs = async () => {
 };
 
 const deleteBlog = async (id) => {
-  const response = await fetch(`${apiUrl}/blogs/${id}`, { method: "DELETE" });
+  const response = await authenticatedFetch(`${apiUrl}/blogs/${id}`, { method: "DELETE" });
   if (!response.ok) {
     throw new Error("Failed to delete blog");
   }
@@ -36,10 +44,12 @@ const deleteBlog = async (id) => {
 };
 
 export default function BlogManagement() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date");
+  const [blogToDelete, setBlogToDelete] = useState(null);
 
   const queryClient = useQueryClient();
   const {
@@ -58,7 +68,7 @@ export default function BlogManagement() {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
     },
     onError: (err) => {
-      alert(`Error deleting blog: ${err.message}`);
+      toast.error(err?.message || 'Error deleting blog');
     },
   });
 
@@ -144,16 +154,40 @@ export default function BlogManagement() {
   });
 
   const handleDelete = (blogId) => {
-    if (confirm("Are you sure you want to delete this blog post?")) {
-      deleteMutation.mutate(blogId);
-    }
+    setBlogToDelete(blogId);
   };
 
   if (isLoading) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="space-y-6">
+          {/* Header skeleton */}
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <div className="h-6 w-48 bg-gray-200 rounded animate-pulse" />
+              <div className="h-4 w-72 bg-gray-100 rounded animate-pulse" />
+            </div>
+            <div className="flex gap-2">
+              <div className="h-10 w-24 bg-gray-200 rounded-lg animate-pulse" />
+              <div className="h-10 w-32 bg-gray-200 rounded-lg animate-pulse" />
+            </div>
+          </div>
+
+          {/* Filters skeleton */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="h-10 bg-gray-100 rounded" />
+              <div className="h-10 bg-gray-100 rounded" />
+              <div className="h-10 bg-gray-100 rounded" />
+              <div className="h-10 bg-gray-100 rounded" />
+            </div>
+          </div>
+
+          {/* Stats skeleton */}
+          <StatsSkeleton count={4} />
+
+          {/* Table skeleton */}
+          <TableSkeleton columns={7} rows={6} />
         </div>
       </AdminLayout>
     );
@@ -183,13 +217,70 @@ export default function BlogManagement() {
               Manage your blog posts and content
             </p>
           </div>
-          <Link
-            href="/admin/blogs/new"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            <Plus className="w-4 h-4 mr-2" />
-            New Blog Post
-          </Link>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  const columns = [
+                    { key: 'title', label: 'Title' },
+                    { key: 'excerpt', label: 'Excerpt' },
+                    { key: 'category', label: 'Category' },
+                    { key: 'status', label: 'Status' },
+                    { key: 'author', label: 'Author' },
+                    { key: 'views', label: 'Views' },
+                    { key: 'createdAt', label: 'Created Date' },
+                  ];
+                  exportToCSV(sortedBlogs, columns, 'blogs');
+                }}
+                className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                title="Export to CSV"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                CSV
+              </button>
+              <button
+                onClick={async () => {
+                  const columns = [
+                    { key: 'title', label: 'Title' },
+                    { key: 'excerpt', label: 'Excerpt' },
+                    { key: 'category', label: 'Category' },
+                    { key: 'status', label: 'Status' },
+                    { key: 'author', label: 'Author' },
+                    { key: 'views', label: 'Views' },
+                    { key: 'createdAt', label: 'Created Date' },
+                  ];
+                  await exportToExcel(sortedBlogs, columns, 'blogs');
+                }}
+                className="inline-flex items-center px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors"
+                title="Export to Excel"
+              >
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                Excel
+              </button>
+            </div>
+            <button
+              onClick={() => router.push("/admin/blogs/new")}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+              <Plus className="w-4 h-4 mr-2" />
+              New Blog Post
+            </button>
+          </div>
         </div>
+
+        <ConfirmModal
+          open={!!blogToDelete}
+          title="Delete blog post"
+          message="Are you sure you want to delete this blog post? This action cannot be undone."
+          confirmLabel="Delete"
+          cancelLabel="Cancel"
+          onCancel={() => setBlogToDelete(null)}
+          onConfirm={() => {
+            if (blogToDelete) {
+              deleteMutation.mutate(blogToDelete);
+            }
+            setBlogToDelete(null);
+          }}
+        />
 
         {/* Filters */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

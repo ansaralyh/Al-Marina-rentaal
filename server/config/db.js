@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const defaultUri =
   process.env.MONGODB_URI ||
-  "mongodb+srv://dbUser:Almarina123@rentalcar.jyxyb5e.mongodb.net/marinarentalcar?retryWrites=true&w=majority&appName=RentalCar";
+  "mongodb+srv://aliyasmuhammad1122:aliyassajid@cluster0.cifooiu.mongodb.net/alimarina";
 
 export const connectDB = async () => {
   const uri = defaultUri;

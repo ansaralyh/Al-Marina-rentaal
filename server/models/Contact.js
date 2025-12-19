@@ -9,6 +9,8 @@ const ContactSchema = new mongoose.Schema(
     service: { type: String },
     message: { type: String, required: true },
     source: { type: String, default: "website" },
+    read: { type: Boolean, default: false },
+    readAt: { type: Date },
   },
   { timestamps: true },
 );

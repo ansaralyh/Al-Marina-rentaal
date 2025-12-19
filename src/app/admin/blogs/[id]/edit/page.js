@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import AdminLayout from '@/components/AdminLayout';
 import { authenticatedFetch } from '@/lib/auth';
 import { uploadBlogImage } from '@/lib/upload';
@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-// Zod validation schema for blog post
+// Zod validation schema for blog post (same as new form)
 const blogSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
   excerpt: z.string().max(500, 'Excerpt must be less than 500 characters').optional(),
@@ -33,9 +33,12 @@ const blogSchema = z.object({
   image: z.string().min(1, 'Featured image is required'),
 });
 
-export default function NewBlogPost() {
+export default function EditBlogPost() {
   const router = useRouter();
+  const params = useParams();
+  const blogId = params.id;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showPreview, setShowPreview] = useState(false);
   const [toast, setToast] = useState({ open: false, type: 'success', message: '' });
   const [errors, setErrors] = useState({});
@@ -62,6 +65,56 @@ export default function NewBlogPost() {
     { value: 'events', label: 'Events' },
     { value: 'news', label: 'Industry News' }
   ];
+
+  // Fetch blog data on mount
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        setLoading(true);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+        const response = await authenticatedFetch(`${apiUrl}/blogs/${blogId}`);
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Blog post not found');
+          }
+          throw new Error('Failed to fetch blog post');
+        }
+
+        const blog = await response.json();
+
+        // Populate form with blog data
+        const existingImage = blog.featuredImage || blog.image || '🚗';
+        setFormData({
+          title: blog.title || '',
+          excerpt: blog.excerpt || '',
+          content: blog.content || '',
+          category: blog.category || 'luxury',
+          author: blog.author || 'Ahmed Al-Rashid',
+          tags: blog.tags || [],
+          featured: blog.isFeatured || blog.featured || false,
+          status: blog.status || 'draft',
+          image: existingImage
+        });
+        // Set preview for existing image
+        if (existingImage && existingImage !== '🚗') {
+          setImagePreview(existingImage);
+        }
+      } catch (error) {
+        console.error('Error fetching blog:', error);
+        showToast('error', error.message || 'Failed to load blog post');
+        setTimeout(() => {
+          router.push('/admin/blogs');
+        }, 2000);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (blogId) {
+      fetchBlog();
+    }
+  }, [blogId, router]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -128,26 +181,8 @@ export default function NewBlogPost() {
     setErrors({});
 
     try {
-      // Upload image first if a new file was selected
-      let imageUrl = formData.image;
-      if (imageFile) {
-        setUploadingImage(true);
-        try {
-          const uploadResult = await uploadBlogImage(imageFile);
-          imageUrl = uploadResult.url;
-        } catch (uploadError) {
-          showToast('error', uploadError.message || 'Failed to upload image');
-          return;
-        } finally {
-          setUploadingImage(false);
-        }
-      }
-
-      // Validate with Zod (use uploaded URL)
-      const validatedData = blogSchema.parse({
-        ...formData,
-        image: imageUrl,
-      });
+      // Validate with Zod
+      const validatedData = blogSchema.parse(formData);
 
       setIsSubmitting(true);
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
@@ -156,20 +191,20 @@ export default function NewBlogPost() {
         ...validatedData,
         tags: validatedData.tags || [],
         isFeatured: validatedData.featured,
-        featuredImage: imageUrl,
+        featuredImage: validatedData.image,
       };
 
-      const res = await authenticatedFetch(`${apiUrl}/blogs`, {
-        method: 'POST',
+      const res = await authenticatedFetch(`${apiUrl}/blogs/${blogId}`, {
+        method: 'PUT',
         body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(text || 'Failed to create blog');
+        throw new Error(text || 'Failed to update blog');
       }
 
-      showToast('success', 'Blog post created successfully');
+      showToast('success', 'Blog post updated successfully');
       setTimeout(() => router.push('/admin/blogs'), 600);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -184,7 +219,7 @@ export default function NewBlogPost() {
         showToast('error', 'Please fix the validation errors');
       } else {
         const msg = err.message === 'Failed to fetch'
-          ? 'Cannot connect to backend server. Please make sure the server is running:\n\npnpm run server:dev\n\n(or: npm run server:dev)'
+          ? 'Cannot connect to backend server. Please make sure the server is running.'
           : err.message;
         showToast('error', msg);
       }
@@ -197,6 +232,16 @@ export default function NewBlogPost() {
     setShowPreview(!showPreview);
   };
 
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       {toast.open && (
@@ -204,7 +249,7 @@ export default function NewBlogPost() {
           {toast.message}
         </div>
       )}
-      <div className="space-y-6 transition-opacity duration-300 ease-in-out">
+      <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -215,8 +260,8 @@ export default function NewBlogPost() {
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Create New Blog Post</h1>
-              <p className="text-gray-600">Write and publish a new blog post</p>
+              <h1 className="text-2xl font-bold text-gray-900">Edit Blog Post</h1>
+              <p className="text-gray-600">Update your blog post</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
@@ -233,7 +278,7 @@ export default function NewBlogPost() {
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
               <Save className="w-4 h-4 mr-2" />
-              {isSubmitting ? 'Saving...' : 'Save Post'}
+              {isSubmitting ? 'Saving...' : 'Update Post'}
             </button>
           </div>
         </div>
@@ -243,7 +288,13 @@ export default function NewBlogPost() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-8">
-                <div className="text-6xl mb-4">{formData.image}</div>
+                <div className="text-6xl mb-4">
+                  {imagePreview && imagePreview !== '🚗' && (imagePreview.startsWith('http') || imagePreview.startsWith('data:') || imagePreview.startsWith('/')) ? (
+                    <img src={imagePreview} alt="Featured" className="mx-auto max-h-64 object-contain" />
+                  ) : (
+                    imagePreview || '🚗'
+                  )}
+                </div>
                 <h1 className="text-4xl font-bold text-gray-900 mb-4">{formData.title}</h1>
                 <p className="text-xl text-gray-600 mb-6">{formData.excerpt}</p>
                 <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
@@ -257,7 +308,7 @@ export default function NewBlogPost() {
                   </div>
                   <div className="flex items-center">
                     <Tag className="w-4 h-4 mr-2" />
-                    {formData.category}
+                    {categories.find(c => c.value === formData.category)?.label || formData.category}
                   </div>
                 </div>
               </div>
@@ -299,14 +350,9 @@ export default function NewBlogPost() {
                     value={formData.title}
                     onChange={handleInputChange}
                     required
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg ${
-                      errors.title ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                     placeholder="Enter blog post title..."
                   />
-                  {errors.title && (
-                    <p className="mt-1 text-sm text-red-600">{errors.title}</p>
-                  )}
                 </div>
 
                 {/* Excerpt */}
@@ -320,14 +366,9 @@ export default function NewBlogPost() {
                     onChange={handleInputChange}
                     required
                     rows={3}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      errors.excerpt ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Write a brief description of your blog post..."
                   />
-                  {errors.excerpt && (
-                    <p className="mt-1 text-sm text-red-600">{errors.excerpt}</p>
-                  )}
                 </div>
 
                 {/* Content */}
@@ -341,14 +382,9 @@ export default function NewBlogPost() {
                     onChange={handleInputChange}
                     required
                     rows={15}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm ${
-                      errors.content ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
                     placeholder="Write your blog post content here..."
                   />
-                  {errors.content && (
-                    <p className="mt-1 text-sm text-red-600">{errors.content}</p>
-                  )}
                 </div>
               </div>
 
@@ -513,3 +549,4 @@ export default function NewBlogPost() {
     </AdminLayout>
   );
 }
+

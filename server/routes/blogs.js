@@ -1,5 +1,6 @@
 import express from "express";
 import { Blog } from "../models/Blog.js";
+import { authenticate, requireAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -26,7 +27,8 @@ router.get("/:idOrSlug", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+// Create blog (Admin only)
+router.post("/", authenticate, requireAdmin, async (req, res, next) => {
   try {
     const blog = new Blog(req.body);
     await blog.save();
@@ -36,7 +38,8 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.put("/:id", async (req, res, next) => {
+// Update blog (Admin only)
+router.put("/:id", authenticate, requireAdmin, async (req, res, next) => {
   try {
     const updated = await Blog.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -51,7 +54,8 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+// Delete blog (Admin only)
+router.delete("/:id", authenticate, requireAdmin, async (req, res, next) => {
   try {
     const deleted = await Blog.findByIdAndDelete(req.params.id);
     if (!deleted) {

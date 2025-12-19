@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import { 
   LayoutDashboard, 
   FileText, 
-  Plus, 
   List, 
   Settings, 
   LogOut,
@@ -21,11 +22,28 @@ import {
 export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, isLoading, isAuthenticated, logout } = useAuth();
+
+  // Check authentication
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && pathname !== '/admin/login') {
+      router.push('/admin/login');
+    }
+  }, [isLoading, isAuthenticated, pathname, router]);
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  // Don't render layout if not authenticated (will redirect)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'All Blogs', href: '/admin/blogs', icon: List },
-    { name: 'Add Blog', href: '/admin/blogs/new', icon: Plus },
     { name: 'Vehicles', href: '/admin/vehicles', icon: Car },
     { name: 'Bookings', href: '/admin/bookings', icon: Calendar },
     { name: 'Contacts', href: '/admin/contacts', icon: Mail },
@@ -95,11 +113,14 @@ export default function AdminLayout({ children }) {
               <User className="w-4 h-4 text-white" />
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-900">Admin Blogger</p>
-              <p className="text-xs text-gray-500">almarinarentacar@gmail.com</p>
+              <p className="text-sm font-medium text-gray-900">{user?.name || "Admin"}</p>
+              <p className="text-xs text-gray-500">{user?.email || ""}</p>
             </div>
           </div>
-          <button className="mt-3 flex items-center text-sm text-gray-600 hover:text-gray-900">
+          <button 
+            onClick={handleLogout}
+            className="mt-3 flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors w-full"
+          >
             <LogOut className="w-4 h-4 mr-2" />
             Sign Out
           </button>
@@ -128,7 +149,9 @@ export default function AdminLayout({ children }) {
 
         {/* Page content */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          {children}
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
         </main>
       </div>
     </div>

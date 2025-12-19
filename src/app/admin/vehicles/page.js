@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import AdminLayout from '@/components/AdminLayout';
+import ConfirmModal from '@/components/ConfirmModal';
+import VehicleDetailsModal from '@/components/VehicleDetailsModal';
+import { StatsSkeleton, TableSkeleton } from '@/components/Skeletons';
 import Link from 'next/link';
+import { authenticatedFetch } from '@/lib/auth';
+import { exportToCSV, exportToExcel } from '@/lib/export';
+import toast from "react-hot-toast";
 import { 
   Car, 
   Plus, 
@@ -11,13 +17,15 @@ import {
   Trash2, 
   Eye,
   Search,
-  Filter
+  Filter,
+  Download,
+  FileSpreadsheet
 } from 'lucide-react';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 const fetchVehicles = async () => {
-  const response = await fetch(`${apiUrl}/vehicles`);
+  const response = await authenticatedFetch(`${apiUrl}/vehicles`);
   if (!response.ok) {
     throw new Error('Failed to fetch vehicles');
   }
@@ -25,7 +33,7 @@ const fetchVehicles = async () => {
 };
 
 const deleteVehicle = async (id) => {
-  const response = await fetch(`${apiUrl}/vehicles/${id}`, { method: 'DELETE' });
+  const response = await authenticatedFetch(`${apiUrl}/vehicles/${id}`, { method: 'DELETE' });
   if (!response.ok) {
     throw new Error('Failed to delete vehicle');
   }
@@ -36,6 +44,10 @@ export default function VehiclesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterAvailability, setFilterAvailability] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const [vehicleToDelete, setVehicleToDelete] = useState(null);
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
 
   const queryClient = useQueryClient();
   const {
@@ -54,7 +66,7 @@ export default function VehiclesPage() {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
     },
     onError: (err) => {
-      alert(`Error deleting vehicle: ${err.message}`);
+      toast.error(err?.message || 'Error deleting vehicle');
     },
   });
 
@@ -104,17 +116,51 @@ export default function VehiclesPage() {
     return matchesSearch && matchesCategory && matchesAvailability;
   });
 
+  const totalFiltered = filteredVehicles.length;
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / pageSize));
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentPageItems = filteredVehicles.slice(startIndex, endIndex);
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages) return;
+    setCurrentPage(newPage);
+  };
+
   const handleDelete = (id) => {
-    if (confirm('Are you sure you want to delete this vehicle?')) {
-      deleteMutation.mutate(id);
-    }
+    setVehicleToDelete(id);
   };
 
   if (isLoading) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="space-y-6">
+          {/* Header skeleton */}
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <div className="h-6 w-40 bg-gray-200 rounded animate-pulse" />
+              <div className="h-4 w-64 bg-gray-100 rounded animate-pulse" />
+            </div>
+            <div className="flex gap-2">
+              <div className="h-10 w-24 bg-gray-200 rounded-lg animate-pulse" />
+              <div className="h-10 w-32 bg-gray-200 rounded-lg animate-pulse" />
+            </div>
+          </div>
+
+          {/* Filters skeleton */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 animate-pulse">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="h-10 bg-gray-100 rounded" />
+              <div className="h-10 bg-gray-100 rounded" />
+              <div className="h-10 bg-gray-100 rounded" />
+            </div>
+          </div>
+
+          {/* Stats skeleton */}
+          <StatsSkeleton count={4} />
+
+          {/* Table skeleton */}
+          <TableSkeleton columns={7} rows={5} />
         </div>
       </AdminLayout>
     );
@@ -140,13 +186,65 @@ export default function VehiclesPage() {
             <h1 className="text-3xl font-bold text-gray-900">Vehicle Fleet</h1>
             <p className="text-gray-600 mt-2">Manage your car rental fleet</p>
           </div>
-          <Link
-            href="/admin/vehicles/new"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add New Vehicle
-          </Link>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  const columns = [
+                    { key: 'name', label: 'Name' },
+                    { key: 'make', label: 'Make' },
+                    { key: 'model', label: 'Model' },
+                    { key: 'year', label: 'Year' },
+                    { key: 'category', label: 'Category' },
+                    { key: 'type', label: 'Type' },
+                    { key: 'price', label: 'Price' },
+                    { key: 'currency', label: 'Currency' },
+                    { key: 'availability', label: 'Availability' },
+                    { key: 'fuelType', label: 'Fuel Type' },
+                    { key: 'transmission', label: 'Transmission' },
+                    { key: 'seats', label: 'Seats' },
+                  ];
+                  exportToCSV(filteredVehicles, columns, 'vehicles');
+                }}
+                className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                title="Export to CSV"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                CSV
+              </button>
+              <button
+                onClick={async () => {
+                  const columns = [
+                    { key: 'name', label: 'Name' },
+                    { key: 'make', label: 'Make' },
+                    { key: 'model', label: 'Model' },
+                    { key: 'year', label: 'Year' },
+                    { key: 'category', label: 'Category' },
+                    { key: 'type', label: 'Type' },
+                    { key: 'price', label: 'Price' },
+                    { key: 'currency', label: 'Currency' },
+                    { key: 'availability', label: 'Availability' },
+                    { key: 'fuelType', label: 'Fuel Type' },
+                    { key: 'transmission', label: 'Transmission' },
+                    { key: 'seats', label: 'Seats' },
+                  ];
+                  await exportToExcel(filteredVehicles, columns, 'vehicles');
+                }}
+                className="inline-flex items-center px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors"
+                title="Export to Excel"
+              >
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                Excel
+              </button>
+            </div>
+            <Link
+              href="/admin/vehicles/new"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Vehicle
+            </Link>
+          </div>
         </div>
 
         {/* Filters */}
@@ -315,13 +413,14 @@ export default function VehiclesPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
-                          <Link
-                            href={`/fleet/cardetails`}
+                          <button
+                            type="button"
+                            onClick={() => setSelectedVehicle(vehicle)}
                             className="text-blue-600 hover:text-blue-900"
-                            title="View"
+                            title="View details"
                           >
                             <Eye className="w-4 h-4" />
-                          </Link>
+                          </button>
                           <Link
                             href={`/admin/vehicles/${vehicle.id}/edit`}
                             className="text-indigo-600 hover:text-indigo-900"
@@ -345,8 +444,30 @@ export default function VehiclesPage() {
             </table>
           </div>
         </div>
+
+        {/* Delete confirmation modal */}
+        <ConfirmModal
+          open={!!vehicleToDelete}
+          title="Delete vehicle"
+          message="Are you sure you want to delete this vehicle? This action cannot be undone."
+          confirmLabel="Delete"
+          cancelLabel="Cancel"
+          onCancel={() => setVehicleToDelete(null)}
+          onConfirm={() => {
+            if (vehicleToDelete) {
+              deleteMutation.mutate(vehicleToDelete);
+            }
+            setVehicleToDelete(null);
+          }}
+        />
+
+        {/* Vehicle details modal */}
+        <VehicleDetailsModal
+          open={!!selectedVehicle}
+          vehicle={selectedVehicle}
+          onClose={() => setSelectedVehicle(null)}
+        />
       </div>
     </AdminLayout>
   );
 }
-

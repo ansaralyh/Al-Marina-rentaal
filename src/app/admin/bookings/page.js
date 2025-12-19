@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import AdminLayout from '@/components/AdminLayout';
+import { authenticatedFetch } from '@/lib/auth';
+import { exportToCSV, exportToExcel } from '@/lib/export';
+import { StatsSkeleton, TableSkeleton } from '@/components/Skeletons';
+import BookingDetailsModal from '@/components/BookingDetailsModal';
 import { 
   Calendar, 
   Search,
@@ -13,22 +17,40 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  Download,
+  FileSpreadsheet
 } from 'lucide-react';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 const fetchBookings = async () => {
-  const response = await fetch(`${apiUrl}/bookings`);
+  const response = await authenticatedFetch(`${apiUrl}/bookings`);
   if (!response.ok) {
     throw new Error('Failed to fetch bookings');
   }
   return response.json();
 };
 
+const updateBookingStatus = async ({ id, status }) => {
+  const response = await authenticatedFetch(`${apiUrl}/bookings/${id}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || "Failed to update booking status");
+  }
+
+  return response.json();
+};
+
 export default function BookingsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const queryClient = useQueryClient();
 
   const {
     data: bookings = [],
@@ -39,6 +61,41 @@ export default function BookingsPage() {
     queryKey: ['bookings'],
     queryFn: fetchBookings,
   });
+
+  const statusMutation = useMutation({
+    mutationFn: updateBookingStatus,
+    onSuccess: () => {
+      // Refresh bookings after a successful update
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+    },
+  });
+
+  const handleStatusChange = (bookingId, nextStatus) => {
+    if (!bookingId || !nextStatus) return;
+    statusMutation.mutate({ id: bookingId, status: nextStatus });
+  };
+
+  // Determine which actions are available for a given status.
+  // Simple, clear flow:
+  // - pending   → confirm / cancel
+  // - confirmed → complete / cancel
+  // - completed / cancelled → no further actions
+  const getAvailableActions = (status) => {
+    const normalized = (status || "pending").toLowerCase();
+    if (normalized === "pending") {
+      return [
+        { key: "confirm", label: "Confirm", nextStatus: "confirmed", color: "emerald" },
+        { key: "cancel", label: "Cancel", nextStatus: "cancelled", color: "red" },
+      ];
+    }
+    if (normalized === "confirmed") {
+      return [
+        { key: "complete", label: "Complete", nextStatus: "completed", color: "blue" },
+        { key: "cancel", label: "Cancel", nextStatus: "cancelled", color: "red" },
+      ];
+    }
+    return [];
+  };
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -90,8 +147,29 @@ export default function BookingsPage() {
   if (isLoading) {
     return (
       <AdminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="space-y-6">
+          {/* Header skeleton */}
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <div className="h-6 w-40 bg-gray-200 rounded animate-pulse" />
+              <div className="h-4 w-64 bg-gray-100 rounded animate-pulse" />
+            </div>
+            <div className="h-10 w-40 bg-gray-200 rounded-lg animate-pulse" />
+          </div>
+
+          {/* Stats skeleton */}
+          <StatsSkeleton count={4} />
+
+          {/* Filters skeleton */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 animate-pulse">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="h-10 bg-gray-100 rounded" />
+              <div className="h-10 bg-gray-100 rounded" />
+            </div>
+          </div>
+
+          {/* Table skeleton */}
+          <TableSkeleton columns={7} rows={6} />
         </div>
       </AdminLayout>
     );
@@ -117,6 +195,62 @@ export default function BookingsPage() {
             <p className="text-gray-600 mt-2">
               Manage and view all vehicle booking inquiries
             </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                const columns = [
+                  { key: 'name', label: 'Customer Name' },
+                  { key: 'email', label: 'Email' },
+                  { key: 'phone', label: 'Phone' },
+                  { key: 'vehicle', label: 'Vehicle' },
+                  { key: 'pickupDate', label: 'Pickup Date' },
+                  { key: 'dropoffDate', label: 'Dropoff Date' },
+                  { key: 'status', label: 'Status' },
+                  { key: 'createdAt', label: 'Date Submitted' },
+                ];
+                // Format dates for export
+                const exportData = filteredBookings.map(booking => ({
+                  ...booking,
+                  pickupDate: booking.pickupDate ? new Date(booking.pickupDate).toLocaleDateString() : '',
+                  dropoffDate: booking.dropoffDate ? new Date(booking.dropoffDate).toLocaleDateString() : '',
+                  createdAt: booking.createdAt ? new Date(booking.createdAt).toLocaleString() : '',
+                }));
+                exportToCSV(exportData, columns, 'bookings');
+              }}
+              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              title="Export to CSV"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              CSV
+            </button>
+            <button
+              onClick={async () => {
+                const columns = [
+                  { key: 'name', label: 'Customer Name' },
+                  { key: 'email', label: 'Email' },
+                  { key: 'phone', label: 'Phone' },
+                  { key: 'vehicle', label: 'Vehicle' },
+                  { key: 'pickupDate', label: 'Pickup Date' },
+                  { key: 'dropoffDate', label: 'Dropoff Date' },
+                  { key: 'status', label: 'Status' },
+                  { key: 'createdAt', label: 'Date Submitted' },
+                ];
+                // Format dates for export
+                const exportData = filteredBookings.map(booking => ({
+                  ...booking,
+                  pickupDate: booking.pickupDate ? new Date(booking.pickupDate).toLocaleDateString() : '',
+                  dropoffDate: booking.dropoffDate ? new Date(booking.dropoffDate).toLocaleDateString() : '',
+                  createdAt: booking.createdAt ? new Date(booking.createdAt).toLocaleString() : '',
+                }));
+                await exportToExcel(exportData, columns, 'bookings');
+              }}
+              className="inline-flex items-center px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors"
+              title="Export to Excel"
+            >
+              <FileSpreadsheet className="w-4 h-4 mr-2" />
+              Excel
+            </button>
           </div>
         </div>
 
@@ -224,12 +358,15 @@ export default function BookingsPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Date Submitted
                   </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredBookings.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                    <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
                       {bookings.length === 0 ? 'No bookings found.' : 'No bookings match your search criteria.'}
                     </td>
                   </tr>
@@ -296,6 +433,43 @@ export default function BookingsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {booking.createdAt ? new Date(booking.createdAt).toLocaleDateString() : 'N/A'}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm space-x-2">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedBooking(booking)}
+                          className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 mr-1"
+                        >
+                          View
+                        </button>
+                        {getAvailableActions(booking.status).length === 0 ? (
+                          <span className="text-xs text-gray-400 italic">No further actions</span>
+                        ) : (
+                          getAvailableActions(booking.status).map((action) => {
+                            const isThisRowUpdating =
+                              statusMutation.isPending &&
+                              statusMutation.variables?.id === booking._id;
+
+                            const colorClass =
+                              action.color === "emerald"
+                                ? "border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                                : action.color === "blue"
+                                  ? "border-blue-200 text-blue-700 hover:bg-blue-50"
+                                  : "border-red-200 text-red-700 hover:bg-red-50";
+
+                            return (
+                              <button
+                                key={action.key}
+                                type="button"
+                                onClick={() => handleStatusChange(booking._id, action.nextStatus)}
+                                disabled={isThisRowUpdating}
+                                className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${colorClass} disabled:opacity-50 disabled:cursor-not-allowed`}
+                              >
+                                {action.label}
+                              </button>
+                            );
+                          })
+                        )}
+                      </td>
                     </tr>
                   ))
                 )}
@@ -304,27 +478,12 @@ export default function BookingsPage() {
           </div>
         </div>
 
-        {/* Message Preview Modal (optional - can be expanded later) */}
-        {filteredBookings.length > 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Messages</h2>
-            <div className="space-y-4">
-              {filteredBookings.slice(0, 5).map((booking) => (
-                booking.message && (
-                  <div key={booking._id} className="border-l-4 border-blue-500 pl-4 py-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-gray-900">{booking.name}</span>
-                      <span className="text-xs text-gray-500">
-                        {booking.createdAt ? new Date(booking.createdAt).toLocaleDateString() : ''}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 line-clamp-2">{booking.message}</p>
-                  </div>
-                )
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Booking details modal */}
+        <BookingDetailsModal
+          open={!!selectedBooking}
+          booking={selectedBooking}
+          onClose={() => setSelectedBooking(null)}
+        />
       </div>
     </AdminLayout>
   );

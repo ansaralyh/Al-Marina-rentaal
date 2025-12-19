@@ -1,5 +1,6 @@
 import express from "express";
 import { Vehicle } from "../models/Vehicle.js";
+import { authenticate, requireAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -31,8 +32,8 @@ router.get("/:idOrSlug", async (req, res, next) => {
   }
 });
 
-// Create vehicle
-router.post("/", async (req, res, next) => {
+// Create vehicle (Admin only)
+router.post("/", authenticate, requireAdmin, async (req, res, next) => {
   try {
     const vehicle = new Vehicle(req.body);
     await vehicle.save();
@@ -42,8 +43,8 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-// Update vehicle
-router.put("/:id", async (req, res, next) => {
+// Update vehicle (Admin only)
+router.put("/:id", authenticate, requireAdmin, async (req, res, next) => {
   try {
     const updated = await Vehicle.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -58,8 +59,8 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
-// Delete vehicle
-router.delete("/:id", async (req, res, next) => {
+// Delete vehicle (Admin only)
+router.delete("/:id", authenticate, requireAdmin, async (req, res, next) => {
   try {
     const deleted = await Vehicle.findByIdAndDelete(req.params.id);
     if (!deleted) {
